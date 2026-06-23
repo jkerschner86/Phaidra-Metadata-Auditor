@@ -1,0 +1,19 @@
+{
+  "oerhub_austria": {
+    "hub_name": "OERhub.at",
+    "classification_id": "YA8R-1M0D",
+    "mandatory_fields": {
+      "title": { "path": "dce:title", "sub_key": "bf:mainTitle" },
+      "description": { "path": "bf:note", "sub_key": "skos:prefLabel" },
+      "license_url": { "path": "edm:rights" },
+      "mime_type": { "path": "ebucore:hasMimeType" },
+      "discipline_ofos": { "path": "dcterms:subject", "uri_prefix": "oefos2012:" },
+      "discipline_bk": { "path": "dcterms:subject", "uri_prefix": "http://uri.gbv.de/terminology/bk/" }
+    },
+    "recommended_gold": {
+      "orcid": { "path": "role:aut", "uri_prefix": "ids:orcid" },
+      "gnd": { "path": "dcterms:subject", "uri_prefix": "https://d-nb.info/gnd/" },
+      "ror": { "path": "role:aut", "uri_prefix": "https://ror.org/" }
+    }
+  }
+}

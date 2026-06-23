@@ -1,0 +1,120 @@
+"""
+=============================================================================
+MODULE: analyzer.py
+PURPOSE: Evaluates Phaidra metadata against OERhub.at compliance rules.
+LOGIC MODEL: Waterfall (Red -> Green -> Gold).
+=============================================================================
+"""
+
+def extract_metadata_value(doc, path):
+    """
+    Safely extracts values from Phaidra's nested list structure.
+    
+    Excessive Logic Documentation:
+    1. Phaidra API often returns metadata as a list: e.g., ["Title Text"].
+    2. This function checks if the 'path' exists in the dictionary 'doc'.
+    3. If the value is a list, it grabs the first item ([0]).
+    4. If the value is missing or empty, it returns None to trigger audit flags.
+    """
+    raw_value = doc.get(path)
+    
+    if raw_value is None or (isinstance(raw_value, list) and len(raw_value) == 0):
+        return None
+        
+    # If it's a list, take the first string; otherwise, return the value directly[cite: 2].
+    return raw_value[0] if isinstance(raw_value, list) else raw_value
+
+def run_metadata_audit(docs, profile):
+    """
+    Performs the tiered audit for every document in the harvested list.
+    
+    Args:
+        docs (list): The list of raw metadata dictionaries from the fetcher.
+        profile (dict): The 'oerhub_austria' configuration from profiles.json.
+        
+    Returns:
+        list: A list of enriched 'Audit Result' dictionaries for the reporter.
+    """
+    audit_results = []
+    
+    # We iterate through every single object found during the harvest[cite: 2].
+    for doc in docs:
+        pid = doc.get('pid', 'Unknown PID')
+        
+        # -------------------------------------------------------------------
+        # STEP 1: INITIALIZE CONTAINERS
+        # -------------------------------------------------------------------
+        # We prepare lists to store the specific missing fields for the CSV.
+        missing_mandatory_user = []
+        missing_mandatory_tech = []
+        missing_recommended = []
+        
+        has_gold_id = False # Tracks if ORCID, GND, or ROR is present.
+
+        # -------------------------------------------------------------------
+        # STEP 2: CHECK MANDATORY FIELDS (The 'Red' Tier)
+        # -------------------------------------------------------------------
+        # These are the 8 fields required for visibility in OERhub.at[cite: 1, 2].
+        for field_key, field_cfg in profile['mandatory_fields'].items():
+            value = extract_metadata_value(doc, field_cfg['path'])
+            
+            # Special Logic: License MUST be a full URL (URI).
+            if field_key == "license_url" and value:
+                if "http" not in str(value):
+                    value = None # Force a fail if it's just text like 'CC BY'.
+
+            # If the value is missing, log it for the report.
+            if not value:
+                # Format: "Author"
+                missing_mandatory_user.append(field_key.replace("_", " ").title())
+                # Format: "LOM 2.3.2"
+                missing_mandatory_tech.append(field_cfg['lom'])
+
+        # -------------------------------------------------------------------
+        # STEP 3: CHECK RECOMMENDED FIELDS (The 'Gold' Tier)
+        # -------------------------------------------------------------------
+        # Even if an object is GOLD, missing fields here stay in the report.
+        for rec_key, rec_cfg in profile['recommended_gold'].items():
+            value = extract_metadata_value(doc, rec_cfg['path'])
+            
+            if value:
+                # If any LOD identifier is present, the object qualifies for Gold.
+                if rec_cfg.get('type') == "id_check":
+                    has_gold_id = True
+            else:
+                # If missing, add to the recommended column.
+                missing_recommended.append(rec_cfg['name'])
+
+        # -------------------------------------------------------------------
+        # STEP 4: CALCULATE FINAL STATUS & VISIBILITY
+        # -------------------------------------------------------------------
+        # 1. Start with RED (Failed audit).
+        status = "RED"
+        visibility = False
+        
+        # 2. Upgrade to GREEN if all mandatory fields are present[cite: 1].
+        if not missing_mandatory_user:
+            status = "GREEN"
+            visibility = True
+            
+            # 3. Upgrade to GOLD if Green AND at least one LOD ID exists[cite: 1].
+            if has_gold_id:
+                status = "GOLD"
+
+        # -------------------------------------------------------------------
+        # STEP 5: COMPILE THE FINAL DATA ROW
+        # -------------------------------------------------------------------
+        # We structure this dictionary to match your exact CSV requirements[cite: 1].
+        result_row = {
+            "Object ID": pid,
+            "Status": status,
+            "Visibility": visibility,
+            "Mandatory User Friendly": " • ".join(sorted(missing_mandatory_user)),
+            "Mandatory Technical": " • ".join(sorted(missing_mandatory_tech)),
+            "Recommended": " • ".join(missing_recommended)
+        }
+        
+        audit_results.append(result_row)
+
+    print(f"[OK] Audit complete for {len(audit_results)} objects.")
+    return audit_results

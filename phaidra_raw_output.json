@@ -1,0 +1,333 @@
+{
+  "response": {
+    "numFound": 1,
+    "docs": [
+      {
+        "bf:note": [
+          {
+            "@type": "bf:Note",
+            "skos:prefLabel": [
+              {
+                "@language": "eng",
+                "@value": "Observing the lunar cycles has been relevant to humankind for millennia, and already in ancient Babylon their fundamental laws were discovered: 19 solar years correspond to almost exactly 235 synodic lunar months or full cycles of moon phases. This so-called Metonic cycle provides a framework for building lunisolar calendars by synchronizing the solar with the lunar year. The Metonic cycle can be visualized using the machine metaphor, and turned into a virtual online and even a mechanical, 3D-printable moon phase calculator."
+              }
+            ]
+          }
+        ],
+        "dce:subject": [
+          {
+            "@type": "skos:Concept",
+            "skos:prefLabel": [
+              {
+                "@language": "eng",
+                "@value": "astronomy"
+              }
+            ]
+          },
+          {
+            "@type": "skos:Concept",
+            "skos:prefLabel": [
+              {
+                "@language": "eng",
+                "@value": "moon"
+              }
+            ]
+          },
+          {
+            "@type": "skos:Concept",
+            "skos:prefLabel": [
+              {
+                "@language": "eng",
+                "@value": "lunar phases"
+              }
+            ]
+          },
+          {
+            "@type": "skos:Concept",
+            "skos:prefLabel": [
+              {
+                "@language": "eng",
+                "@value": "metonic cycle"
+              }
+            ]
+          },
+          {
+            "@type": "skos:Concept",
+            "skos:prefLabel": [
+              {
+                "@language": "eng",
+                "@value": "3d printing"
+              }
+            ]
+          },
+          {
+            "@type": "skos:Concept",
+            "skos:prefLabel": [
+              {
+                "@language": "eng",
+                "@value": "science history"
+              }
+            ]
+          }
+        ],
+        "dce:title": [
+          {
+            "@type": "bf:Title",
+            "bf:mainTitle": [
+              {
+                "@language": "eng",
+                "@value": "From Antiquity to 3D Modeling: The Moon Machine"
+              }
+            ],
+            "bf:subtitle": [
+              {
+                "@language": "eng",
+                "@value": "7th International Conference on Creative\\Media/Technologies (IConCMT), 2025"
+              }
+            ]
+          }
+        ],
+        "dcterms:accessRights": [
+          {
+            "@type": "skos:Concept",
+            "skos:exactMatch": [
+              "https://pid.phaidra.org/vocabulary/QW5R-NG4J"
+            ],
+            "skos:prefLabel": [
+              {
+                "@language": "eng",
+                "@value": "open access"
+              },
+              {
+                "@language": "ita",
+                "@value": "Open Access"
+              }
+            ]
+          }
+        ],
+        "dcterms:language": [
+          "eng"
+        ],
+        "dcterms:subject": [
+          {
+            "@type": "skos:Concept",
+            "rdfs:label": [
+              {
+                "@language": "deu",
+                "@value": "ÖFOS 2012 -- GEISTESWISSENSCHAFTEN (6) -- Geschichte, Archäologie (601) -- Geschichte, Archäologie (6010) -- Experimentelle Archäologie (601025)"
+              },
+              {
+                "@language": "eng",
+                "@value": "ÖFOS 2012 -- HUMANITIES (6) -- History, Archaeology (601) -- History, Archaeology (6010) -- Experimental archaeology (601025)"
+              }
+            ],
+            "skos:exactMatch": [
+              "oefos2012:601025"
+            ],
+            "skos:notation": [
+              "601025"
+            ],
+            "skos:prefLabel": [
+              {
+                "@language": "deu",
+                "@value": "Experimentelle Archäologie"
+              },
+              {
+                "@language": "eng",
+                "@value": "Experimental archaeology"
+              }
+            ]
+          },
+          {
+            "@type": "skos:Concept",
+            "rdfs:label": [
+              {
+                "@value": "Sternkunde"
+              },
+              {
+                "@value": "Himmelskunde"
+              },
+              {
+                "@value": "Astronomy"
+              }
+            ],
+            "skos:exactMatch": [
+              "https://d-nb.info/gnd/4003311-9"
+            ],
+            "skos:prefLabel": [
+              {
+                "@value": "Astronomie"
+              }
+            ]
+          },
+          {
+            "@type": "skos:Concept",
+            "rdfs:label": [
+              {
+                "@value": "Mond / Phase"
+              }
+            ],
+            "skos:exactMatch": [
+              "https://d-nb.info/gnd/4273225-6"
+            ],
+            "skos:prefLabel": [
+              {
+                "@value": "Mondphase"
+              }
+            ]
+          },
+          {
+            "@type": "skos:Concept",
+            "rdfs:label": [
+              {
+                "@value": "3D-Print"
+              },
+              {
+                "@value": "3D-Drucken"
+              },
+              {
+                "@value": "3D Printing"
+              },
+              {
+                "@value": "Binder Jetting"
+              },
+              {
+                "@value": "3D-Druckverfahren"
+              }
+            ],
+            "skos:exactMatch": [
+              "https://d-nb.info/gnd/1032223197"
+            ],
+            "skos:prefLabel": [
+              {
+                "@value": "3D-Druck"
+              }
+            ]
+          },
+          {
+            "@type": "skos:Concept",
+            "skos:exactMatch": [
+              "https://d-nb.info/gnd/7504427-4"
+            ],
+            "skos:prefLabel": [
+              {
+                "@value": "Wissenschaftsgeschichte"
+              }
+            ]
+          },
+          {
+            "@type": "skos:Concept",
+            "rdfs:label": [
+              {
+                "@language": "deu",
+                "@value": "Allgemeine Werke und Philosophie -- Wissenschaft und Kultur allgemein -- Wissenschaft und Kultur allgemein: Allgemeines -- Geschichte der Wissenschaft und Kultur"
+              }
+            ],
+            "skos:exactMatch": [
+              "http://uri.gbv.de/terminology/bk/02.01"
+            ],
+            "skos:prefLabel": [
+              {
+                "@language": "deu",
+                "@value": "02.01 Geschichte der Wissenschaft und Kultur"
+              }
+            ]
+          }
+        ],
+        "dcterms:type": [
+          {
+            "@type": "skos:Concept",
+            "skos:exactMatch": [
+              "https://pid.phaidra.org/vocabulary/69ZZ-2KGX"
+            ],
+            "skos:prefLabel": [
+              {
+                "@language": "eng",
+                "@value": "Text"
+              },
+              {
+                "@language": "deu",
+                "@value": "Text"
+              },
+              {
+                "@language": "ita",
+                "@value": "Documento PDF"
+              }
+            ]
+          }
+        ],
+        "ebucore:filename": [
+          "IConCMT2025_The_Moon_Machine_final.pdf"
+        ],
+        "ebucore:hasMimeType": [
+          "application/pdf"
+        ],
+        "edm:hasType": [
+          {
+            "@type": "skos:Concept",
+            "skos:exactMatch": [
+              "https://pid.phaidra.org/vocabulary/QKDF-E5HA"
+            ],
+            "skos:prefLabel": [
+              {
+                "@language": "eng",
+                "@value": "conference object"
+              },
+              {
+                "@language": "deu",
+                "@value": "Konferenzveröffentlichung"
+              },
+              {
+                "@language": "ita",
+                "@value": "Risultato di convegno"
+              }
+            ]
+          }
+        ],
+        "edm:rights": [
+          "http://creativecommons.org/licenses/by/4.0/"
+        ],
+        "rdam:P30004": [
+          {
+            "@type": "ids:doi",
+            "@value": "10.60522/o:7818"
+          }
+        ],
+        "role:aut": [
+          {
+            "@type": "schema:Person",
+            "schema:affiliation": [
+              {
+                "@type": "schema:Organization",
+                "schema:name": [
+                  {
+                    "@value": "University of Applied Sciences of the Grisons"
+                  }
+                ],
+                "skos:exactMatch": [
+                  "https://ror.org/032ymzc07"
+                ]
+              }
+            ],
+            "schema:familyName": [
+              {
+                "@value": "Weibel"
+              }
+            ],
+            "schema:givenName": [
+              {
+                "@value": "Thomas"
+              }
+            ],
+            "skos:exactMatch": [
+              {
+                "@type": "ids:orcid",
+                "@value": "0009-0007-7843-5935"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
