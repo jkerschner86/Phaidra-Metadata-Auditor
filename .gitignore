@@ -1,0 +1,11 @@
+# Lokale Python-Artefakte
+__pycache__/
+*.pyc
+
+# Lokale Laufzeitdaten blockieren (WICHTIG)
+Output/
+*.csv
+
+# Systemdateien (falls du auf Windows/Mac unterwegs bist)
+.DS_Store
+Thumbs.db
