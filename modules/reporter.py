@@ -1,7 +1,7 @@
 """
 =============================================================================
 MODULE: reporter.py (Semicolon CSV Engine & Stats Summary)
-PURPOSE: Outputs compliance statistics with clear comma separation inside cells.
+PURPOSE: Outputs compliance statistics with automated key-mapping (DictWriter).
 =============================================================================
 """
 import csv
@@ -25,51 +25,54 @@ def generate_summary_stats(compliance_records: List[Dict[str, Any]]) -> None:
     print("\n" + "=" * 50)
     print("         METADATEN-AUDIT ZUSAMMENFASSUNG")
     print("=" * 50)
-    print(f"Analysierte OER-Objekte gesamt: {total}")
+    print(f"Analysierte Objekte gesamt: {total}")
     print(f"🔴 ROT (Nicht erfüllt):          {stats['RED']} ({stats['RED']/total*100:.1f}%)")
     print(f"🟢 GRÜN (Erfüllt):               {stats['GREEN']} ({stats['GREEN']/total*100:.1f}%)")
-    print(f"🟡 GOLD (Übererfüllt / LOD):     {stats['GOLD']} ({stats['GOLD']/total*100:.1f}%)")
+    print(f"🟡 GOLD (LOD / GND vorhanden):   {stats['GOLD']} ({stats['GOLD']/total*100:.1f}%)")
     print("=" * 50 + "\n")
 
-def generate_csv_report(compliance_records: List[Dict[str, Any]], output_filepath: str = "Output/audit_report.csv") -> str:
-    os.makedirs(os.path.dirname(output_filepath), exist_ok=True)
 
-    # "file_formats" ganz am Ende ergänzt
+def generate_csv_report(compliance_records: List[Dict[str, Any]], output_filepath: str) -> str:
+    """Generiert einen semikolierten CSV-Report mittels automatisiertem DictWriter."""
+    if not compliance_records:
+        print("[Warnung] Keine Datensätze zum Schreiben vorhanden.")
+        return output_filepath
+
+    # Definiere die exakten Keys aus dem Analyzer. DictWriter nutzt dies als Spaltenordnung.
     headers = [
-        "object_id", "status", "visibility", "gold_indicators_found", 
-        "missing_fields", "oefos_ids", "oefos_labels", "bk_ids", 
-        "bk_labels", "gnd_ids", "gnd_labels", "mime_types", "file_formats"
+        "object_id", "title", "status", "visibility", "gold_indicators_found", 
+        "missing_fields", "oefos_ids", "oefos_labels", "bk_ids", "bk_labels", 
+        "gnd_ids", "gnd_labels", "mime_types", "file_formats"
     ]
 
+    # Verzeichnis erstellen, falls es noch nicht existiert (z.B. nach frischem Klonen)
+    os.makedirs(os.path.dirname(output_filepath), exist_ok=True)
+
     try:
-        with open(output_filepath, mode="w", encoding="utf-8", newline="") as csv_file:
-            writer = csv.writer(csv_file, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL)
-            writer.writerow(headers)
+        with open(output_filepath, mode="w", newline="", encoding="utf-8") as csv_file:
+            # Verwendung von DictWriter eliminiert positionelle Fehler
+            writer = csv.DictWriter(csv_file, fieldnames=headers, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL)
+            
+            # Header schreiben
+            writer.writeheader()
 
             for record in compliance_records:
-                def list_to_cell(val):
+                # Vorverarbeitung: Listen plattklopfen und fehlende Keys abfangen
+                processed_row = {}
+                for field in headers:
+                    val = record.get(field)
                     if isinstance(val, list):
-                        return ", ".join(str(x) for x in val)
-                    return str(val) if val is not None else "None"
+                        processed_row[field] = ", ".join(str(x) for x in val) if val else "None"
+                    elif val is None:
+                        processed_row[field] = "None"
+                    else:
+                        processed_row[field] = str(val)
 
-                writer.writerow([
-                    # ... [Alle bisherigen Spalten von object_id bis mime_types] ...
-                    record.get("object_id"),
-                    record.get("status"),
-                    record.get("visibility"),
-                    record.get("gold_indicators_found"),
-                    list_to_cell(record.get("missing_fields")),
-                    list_to_cell(record.get("oefos_ids")),
-                    list_to_cell(record.get("oefos_labels")),
-                    list_to_cell(record.get("bk_ids")),
-                    list_to_cell(record.get("bk_labels")),
-                    list_to_cell(record.get("gnd_ids")),
-                    list_to_cell(record.get("gnd_labels")),
-                    list_to_cell(record.get("mime_types")),
-                    list_to_cell(record.get("file_formats")) # NEU hinzugefügt
-                ])
+                writer.writerow(processed_row)
+
         print(f"[Erfolg] CSV-Report generiert unter: {output_filepath}")
         return output_filepath
+        
     except Exception as e:
-        print(f"[Fehler] CSV-Erstellung fehlgeschlagen: {e}")
-        return ""
+        print(f"[CRITICAL ERROR] Fehler beim Schreiben der CSV-Datei: {e}")
+        raise e
