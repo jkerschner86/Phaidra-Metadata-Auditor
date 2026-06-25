@@ -9,3 +9,8 @@ Output/
 # Systemdateien (falls du auf Windows/Mac unterwegs bist)
 .DS_Store
 Thumbs.db
+
+# Mock-Daten und temporäre Testfiles
+mock_phaidra.json
+phaidra_raw_output.json
+
