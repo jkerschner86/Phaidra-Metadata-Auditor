@@ -32,13 +32,13 @@ def generate_summary_stats(compliance_records: List[Dict[str, Any]]) -> None:
     print("=" * 50 + "\n")
 
 def generate_csv_report(compliance_records: List[Dict[str, Any]], output_filepath: str = "Output/audit_report.csv") -> str:
-    """Schreibt die extrahierten Metadaten sauber mit Semikolon-Trennung in eine CSV-Datei."""
     os.makedirs(os.path.dirname(output_filepath), exist_ok=True)
 
+    # "file_formats" ganz am Ende ergänzt
     headers = [
         "object_id", "status", "visibility", "gold_indicators_found", 
         "missing_fields", "oefos_ids", "oefos_labels", "bk_ids", 
-        "bk_labels", "gnd_ids", "gnd_labels"
+        "bk_labels", "gnd_ids", "gnd_labels", "mime_types", "file_formats"
     ]
 
     try:
@@ -53,6 +53,7 @@ def generate_csv_report(compliance_records: List[Dict[str, Any]], output_filepat
                     return str(val) if val is not None else "None"
 
                 writer.writerow([
+                    # ... [Alle bisherigen Spalten von object_id bis mime_types] ...
                     record.get("object_id"),
                     record.get("status"),
                     record.get("visibility"),
@@ -63,7 +64,9 @@ def generate_csv_report(compliance_records: List[Dict[str, Any]], output_filepat
                     list_to_cell(record.get("bk_ids")),
                     list_to_cell(record.get("bk_labels")),
                     list_to_cell(record.get("gnd_ids")),
-                    list_to_cell(record.get("gnd_labels"))
+                    list_to_cell(record.get("gnd_labels")),
+                    list_to_cell(record.get("mime_types")),
+                    list_to_cell(record.get("file_formats")) # NEU hinzugefügt
                 ])
         print(f"[Erfolg] CSV-Report generiert unter: {output_filepath}")
         return output_filepath

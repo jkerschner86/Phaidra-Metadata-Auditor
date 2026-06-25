@@ -4,18 +4,44 @@ MODULE: analyzer.py (Uploader Compliance Engine)
 PURPOSE: Evaluates data entry quality (Red/Green/Gold) based on field presence.
 =============================================================================
 """
+
+import json
+import os
 from typing import List, Dict, Any
 
-def analyze_uploader_metadata(data: Dict[str, Any]) -> Dict[str, Any]:
+# Dynamisches Laden der externen JSON-Konfiguration
+MIME_MAPPING = {}
+try:
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(current_dir)
+    json_path = os.path.join(project_root, "config", "mime_mapping.json")
+    
+    with open(json_path, "r", encoding="utf-8") as f:
+        MIME_MAPPING = json.load(f)
+    print("[Erfolg] Konfiguration 'mime_mapping.json' erfolgreich geladen.") 
+except Exception as e:
+    print("\n" + "!"*50)
+    print(f"[CRITICAL ERROR] MAPPING-DATEI KONNTE NICHT GELADEN WERDEN!")
+    print(f"Pfad: {json_path if 'json_path' in locals() else 'Unbekannt'}")
+    print(f"Details: {e}")
+    print("!"*50 + "\n")
+
+
+# profiles wird nun als optionales Argument hineingereicht
+def analyze_uploader_metadata(data: Dict[str, Any], profiles: Dict[str, Any] = None) -> Dict[str, Any]:
     """Analysiert die Feldinformationen eines Objekts auf das Ampelsystem."""
     
-    # ARCHITEKTUR-FIX: Hole die PID direkt aus der Harvester-Injektion
+    # Hole die PID direkt aus der Harvester-Injektion
     pid = data.get("_harvester_pid")
     
     # Fallback, falls das Skript mal isoliert mit Rohdaten getestet wird
     if not pid:
         raw_id = data.get("@id", "")
         pid = "o:" + raw_id.split("/o:")[-1] if "/o:" in raw_id else "Unknown PID"
+
+    # HINWEIS FÜR DIE ZUKUNFT:
+    # Hier kann später auf profiles zugegriffen werden, z.B.:
+    # oer_requirements = profiles.get("oer_hub", {}) if profiles else {}
 
     # 2. Feldprüfungen (Uploader-Eingaben)
     missing_fields = []
@@ -68,16 +94,31 @@ def analyze_uploader_metadata(data: Dict[str, Any]) -> Dict[str, Any]:
     if not has_discipline:
         missing_fields.append("MISSING_DISCIPLINE")
 
+    # EXTRAKTION UND MAPPING DER DATENFORMATE
+    raw_mimes = data.get("ebucore:hasMimeType", [])
+    mime_types = []
+    file_formats = [] 
+
+    for mime in raw_mimes:
+        val = None
+        if isinstance(mime, str):
+            val = mime
+        elif isinstance(mime, dict) and "@value" in mime:
+            val = mime["@value"]
+                
+        if val:
+            mime_types.append(val)
+            clean_name = MIME_MAPPING.get(val, val.split("/")[-1].upper() if "/" in val else "Unknown")
+            if clean_name not in file_formats:
+                file_formats.append(clean_name)
+
     # 3. Ampel-Logik (Status-Zuweisung)
-    # ROT: Kritische Pflichtfelder fehlen komplett
     if not has_title or not has_valid_license or not has_discipline:
         status = "RED"
         visibility = False
-    # GOLD: Pflichtfelder erfüllt + Übererfüllung durch Normdaten/LOD (GND vorhanden)
     elif len(gnd_ids) > 0:
         status = "GOLD"
         visibility = True
-    # GRÜN: Pflichtfelder erfüllt, aber keine zusätzliche LOD-Anreicherung (keine GNDs)
     else:
         status = "GREEN"
         visibility = True
@@ -94,23 +135,27 @@ def analyze_uploader_metadata(data: Dict[str, Any]) -> Dict[str, Any]:
         "bk_ids": bk_ids,
         "bk_labels": bk_labels,
         "gnd_ids": gnd_ids,
-        "gnd_labels": gnd_labels
+        "gnd_labels": gnd_labels,
+        "mime_types": mime_types if mime_types else ["Unknown"],
+        "file_formats": file_formats if file_formats else ["Unknown"]
     }
 
-def run_audit(raw_records: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    return [analyze_uploader_metadata(rec) for rec in raw_records]
 
-def execute_compliance_audit(raw_records: List[Dict[str, Any]], profile: Dict[str, Any] = None) -> List[Dict[str, Any]]:
-    """
-    Iteriert über alle JSON-LD Datensätze des Uploaders.
-    Akzeptiert das 'profile' Argument, um die Kompatibilität mit main.py zu wahren.
-    """
+# Reicht profiles an analyze_uploader_metadata weiter
+def run_audit(raw_records: List[Dict[str, Any]], profiles: Dict[str, Any] = None) -> List[Dict[str, Any]]:
+    return [analyze_uploader_metadata(rec, profiles) for rec in raw_records]
+
+
+# Parameter-Name vereinheitlicht (profiles) und an die Einzelanalyse durchgereicht
+def execute_compliance_audit(raw_records: List[Dict[str, Any]], profiles: Dict[str, Any] = None) -> List[Dict[str, Any]]:
+    """Iteriert über alle JSON-LD Datensätze des Uploaders mit injizierter Konfiguration."""
     print(f"Starte Metadaten-Audit für {len(raw_records)} Objekte...")
     audit_results = []
     
     for record in raw_records:
         try:
-            analyzed = analyze_uploader_metadata(record)
+            # profiles wird hier explizit übergeben
+            analyzed = analyze_uploader_metadata(record, profiles)
             audit_results.append(analyzed)
         except Exception as e:
             print(f"[Warnung] Fehler bei der Analyse eines Objekts: {e}")

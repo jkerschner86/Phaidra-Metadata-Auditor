@@ -61,8 +61,6 @@ def harvest_oer_data(set_name: str = "oer", classification_id: Optional[str] = N
     
     jsonld_results = []
     failed_pids = []
-
-# ... (oberer Teil der Funktion harvest_oer_data bleibt gleich)
     jsonld_results = []
     failed_pids = []
 
@@ -73,7 +71,7 @@ def harvest_oer_data(set_name: str = "oer", classification_id: Optional[str] = N
             try:
                 data = future.result()
                 if data:
-                    # ARCHITEKTUR-FIX: Injiziere die PID direkt in den Datensatz
+                    # Injiziere die PID direkt in den Datensatz
                     data["_harvester_pid"] = pid
                     jsonld_results.append(data)
                 else:
@@ -81,7 +79,7 @@ def harvest_oer_data(set_name: str = "oer", classification_id: Optional[str] = N
             except Exception:
                 failed_pids.append(pid)
 
-    # Kritische Lücke schließen: Fehlermeldung im Terminal ausgeben
+    # Fehlermeldung im Terminal ausgeben
     if failed_pids:
         print(f"\n[Warnung] {len(failed_pids)} Objekte konnten nicht geladen werden (Timeout/404/403):")
         print(f"          Betroffene PIDs: {', '.join(failed_pids)}\n")

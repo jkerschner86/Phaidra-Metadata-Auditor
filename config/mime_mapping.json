@@ -1,0 +1,13 @@
+{
+  "application/pdf": "PDF",
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation": "MS PowerPoint",
+  "application/vnd.ms-powerpoint": "MS PowerPoint",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "MS Word",
+  "application/msword": "MS Word",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "MS Excel",
+  "application/vnd.ms-excel": "MS Excel",
+  "image/jpeg": "Bild (JPEG)",
+  "image/png": "Bild (PNG)",
+  "video/mp4": "Video (MP4)",
+  "audio/mpeg": "Audio (MP3)"
+}
