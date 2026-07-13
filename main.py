@@ -31,7 +31,7 @@ def main():
     # 3. DATA FETCHING (Rohdaten von Phaidra holen)
     print("\n[INFO] Starte Datenabruf via Fetcher...")
     try:
-        # HINWEIS: Passe die Argumente an die tatsächliche fetcher-Funktion an 
+        # HINWEIS: Argumente an die tatsächliche fetcher-Funktion anpassen 
         # (z.B. wenn eine Collection-ID oder eine Liste von PIDs übergeben wird)
         raw_objects = fetcher.harvest_oer_data() 
         print(f"[SUCCESS] {len(raw_objects)} Objekte erfolgreich abgerufen.")

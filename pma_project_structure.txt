@@ -1,0 +1,16 @@
+phaidra-auditor/
+│
+├── config/
+│   ├── mime_mapping.json
+│   └── profiles.json     
+│
+├── modules/
+│   ├── analyzer.py
+│   ├── fetcher.py
+│   └── reporter.py
+│
+├── output/
+│
+├── main.py
+├── .gitignore
+└── requirements.txt

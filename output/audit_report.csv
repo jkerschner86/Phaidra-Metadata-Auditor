@@ -1,102 +1,102 @@
-object_id;status;visibility;gold_indicators_found;missing_fields;oefos_ids;oefos_labels;bk_ids;bk_labels;gnd_ids;gnd_labels;mime_types;file_formats
-o:7691;GREEN;True;0;None;oefos2012:502032;Qualitätsmanagement;;;;;application/vnd.openxmlformats-officedocument.presentationml.presentation;MS PowerPoint
-o:7690;GREEN;True;0;None;oefos2012:502032;Qualitätsmanagement;;;;;application/pdf;PDF
-o:7694;GREEN;True;0;None;oefos2012:503006, oefos2012:503;Bildungsforschung, Erziehungswissenschaften;;;;;application/pdf;PDF
-o:7696;GREEN;True;0;None;oefos2012:102008, oefos2012:102;Computergraphik, Informatik;;;;;application/vnd.openxmlformats-officedocument.presentationml.presentation;MS PowerPoint
-o:7693;GREEN;True;0;None;oefos2012:502032;Qualitätsmanagement;;;;;application/vnd.openxmlformats-officedocument.presentationml.presentation;MS PowerPoint
-o:7689;GREEN;True;0;None;oefos2012:502032;Qualitätsmanagement;;;;;application/vnd.openxmlformats-officedocument.presentationml.presentation;MS PowerPoint
-o:7695;GREEN;True;0;None;oefos2012:102008, oefos2012:102;Computergraphik, Informatik;;;;;application/pdf;PDF
-o:7688;GREEN;True;0;None;oefos2012:502032;Qualitätsmanagement;;;;;application/pdf;PDF
-o:7684;GREEN;True;0;None;oefos2012:303024, oefos2012:102001;Pflegewissenschaft, Artificial Intelligence;;;;;application/pdf;PDF
-o:7678;GREEN;True;0;None;oefos2012:503008;E-Learning;;;;;application/pdf;PDF
-o:7683;GREEN;True;0;None;oefos2012:303024, oefos2012:102001;Pflegewissenschaft, Artificial Intelligence;;;;;application/pdf;PDF
-o:7681;GREEN;True;0;None;oefos2012:1020;Informatik;;;;;application/pdf;PDF
-o:7680;GREEN;True;0;None;oefos2012:102016;IT-Sicherheit;;;;;application/pdf;PDF
-o:7676;GREEN;True;0;None;oefos2012:503006;Bildungsforschung;;;;;application/pdf;PDF
-o:7675;GREEN;True;0;None;oefos2012:503006;Bildungsforschung;;;;;application/pdf;PDF
-o:7668;GREEN;True;0;None;oefos2012:1020;Informatik;;;;;application/pdf;PDF
-o:7667;GREEN;True;0;None;oefos2012:1020;Informatik;;;;;application/pdf;PDF
-o:7449;GREEN;True;0;None;oefos2012:102024;Usability Research;;;;;image/png;Bild (PNG)
-o:7682;GREEN;True;0;None;oefos2012:303024, oefos2012:102001;Pflegewissenschaft, Artificial Intelligence;;;;;application/pdf;PDF
-o:7335;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:7686;RED;False;0;MISSING_DISCIPLINE;;;;;;;video/mp4;Video (MP4)
-o:7323;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:7317;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:7692;GREEN;True;0;None;oefos2012:502032;Qualitätsmanagement;;;;;application/pdf;PDF
-o:7319;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:7333;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:7315;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:7320;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:7326;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:7322;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:7337;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:7331;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:7666;GREEN;True;0;None;oefos2012:1020;Informatik;;;;;application/pdf;PDF
-o:7314;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:7334;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:7327;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:7312;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:7321;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:7328;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:7318;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:7336;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:7332;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:7316;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:7330;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:7329;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:7240;RED;False;0;MISSING_DISCIPLINE;;;;;;;audio/mpeg;Audio (MP3)
-o:7324;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:7239;RED;False;0;MISSING_DISCIPLINE;;;;;;;audio/mpeg;Audio (MP3)
-o:7313;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:7241;RED;False;0;MISSING_DISCIPLINE;;;;;;;audio/mpeg;Audio (MP3)
-o:7325;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5907;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5885;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;application/vnd.openxmlformats-officedocument.wordprocessingml.document;MS Word
-o:5902;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5932;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5928;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5887;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5892;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:7388;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;application/pdf;PDF
-o:5918;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5900;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5897;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5926;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5921;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5890;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5911;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5916;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5919;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5929;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5914;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5924;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5930;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5915;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5925;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5903;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5912;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5898;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5891;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5893;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5920;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5931;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5906;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5883;GREEN;True;0;None;oefos2012:503006;Bildungsforschung;;;;;image/png;Bild (PNG)
-o:5910;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5917;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5888;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5908;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5901;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5922;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5895;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5909;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5894;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5889;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5913;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5884;RED;False;2;MISSING_DISCIPLINE;;;;;105237154X, 4117622-4;Open educational Resources, Weiterbildung;application/pdf;PDF
-o:5896;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5899;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5904;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5923;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5905;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
-o:5927;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;;;;;image/png;Bild (PNG)
+object_id;title;status;visibility;gold_indicators_found;missing_fields;oefos_ids;oefos_labels;bk_ids;bk_labels;gnd_ids;gnd_labels;mime_types;file_formats;date_published;language;object_types;doi_internal;doi_external
+o:7694;OER Policy der USTP – University of Applied Sciences St. Pölten;GREEN;True;0;None;oefos2012:503006, oefos2012:503;Bildungsforschung, Erziehungswissenschaften;None;None;None;None;application/pdf;PDF;Pending API Update;deu;learning object, Other;None;None
+o:7696;Tilesets;GREEN;True;0;None;oefos2012:102008, oefos2012:102;Computergraphik, Informatik;None;None;None;None;application/vnd.openxmlformats-officedocument.presentationml.presentation;MS PowerPoint;Pending API Update;eng;learning object, Presentation;None;None
+o:7686;Introducing Social Innovation: Creativity, Constraints and Change;RED;False;0;MISSING_DISCIPLINE;None;None;None;None;None;None;video/mp4;Video (MP4);Pending API Update;eng;learning object, Video;None;None
+o:7690;Evolution of Quality Management Selection;GREEN;True;0;None;oefos2012:502032;Qualitätsmanagement;None;None;None;None;application/pdf;PDF;Pending API Update;eng;learning object, Text;None;None
+o:7693;Process Modelling Exercises;GREEN;True;0;None;oefos2012:502032;Qualitätsmanagement;None;None;None;None;application/vnd.openxmlformats-officedocument.presentationml.presentation;MS PowerPoint;Pending API Update;eng;learning object, Drill and Practice;None;None
+o:7695;Tilesets;GREEN;True;0;None;oefos2012:102008, oefos2012:102;Computergraphik, Informatik;None;None;None;None;application/pdf;PDF;Pending API Update;eng;learning object, Presentation;None;None
+o:7691;Evolution of Quality Management Selection;GREEN;True;0;None;oefos2012:502032;Qualitätsmanagement;None;None;None;None;application/vnd.openxmlformats-officedocument.presentationml.presentation;MS PowerPoint;Pending API Update;eng;learning object, Text;None;None
+o:7688;Core Principles of Quality Management;GREEN;True;0;None;oefos2012:502032;Qualitätsmanagement;None;None;None;None;application/pdf;PDF;Pending API Update;eng;learning object, Text;None;None
+o:7689;Core Principles of Quality Management;GREEN;True;0;None;oefos2012:502032;Qualitätsmanagement;None;None;None;None;application/vnd.openxmlformats-officedocument.presentationml.presentation;MS PowerPoint;Pending API Update;eng;learning object, Text;None;None
+o:7692;Process Modelling Exercises;GREEN;True;0;None;oefos2012:502032;Qualitätsmanagement;None;None;None;None;application/pdf;PDF;Pending API Update;eng;learning object, Drill and Practice;None;None
+o:7681;PuTTY: Key generation for GitLab Access on Windows;GREEN;True;0;None;oefos2012:1020;Informatik;None;None;None;None;application/pdf;PDF;Pending API Update;eng;learning object, Other;None;None
+o:7668;Statistical Test Selection Guide;GREEN;True;0;None;oefos2012:1020;Informatik;None;None;None;None;application/pdf;PDF;Pending API Update;eng;learning object, Text;None;None
+o:7678;Moodle: Switch text editor;GREEN;True;0;None;oefos2012:503008;E-Learning;None;None;None;None;application/pdf;PDF;Pending API Update;eng;learning object, Other;None;None
+o:7680;VeraCrypt: Container 101 on Windows;GREEN;True;0;None;oefos2012:102016;IT-Sicherheit;None;None;None;None;application/pdf;PDF;Pending API Update;eng;learning object, Other;None;None
+o:7667;Types of Literature Reviews;GREEN;True;0;None;oefos2012:1020;Informatik;None;None;None;None;application/pdf;PDF;Pending API Update;eng;learning object, Text;None;None
+o:7682;Effiziente Literaturrecherche mit Elicit;GREEN;True;0;None;oefos2012:303024, oefos2012:102001;Pflegewissenschaft, Artificial Intelligence;None;None;None;None;application/pdf;PDF;Pending API Update;deu;Presentation;None;None
+o:7675;OER-Weiterbildungskonzept USTP – University of Applied Sciences St. Pölten;GREEN;True;0;None;oefos2012:503006;Bildungsforschung;None;None;None;None;application/pdf;PDF;Pending API Update;deu;learning object, Course;None;None
+o:7683;Effiziente Literaturrecherche mit SciSpace;GREEN;True;0;None;oefos2012:303024, oefos2012:102001;Pflegewissenschaft, Artificial Intelligence;None;None;None;None;application/pdf;PDF;Pending API Update;deu;learning object, Presentation;None;None
+o:7684;Effizientes Literaturscreening mit Rayyan;GREEN;True;0;None;oefos2012:303024, oefos2012:102001;Pflegewissenschaft, Artificial Intelligence;None;None;None;None;application/pdf;PDF;Pending API Update;deu;learning object, Presentation;None;None
+o:7315;Diskussion;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:7335;Vernetzung;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:7666;IMRAD Structure Flow;GREEN;True;0;None;oefos2012:1020;Informatik;None;None;None;None;application/pdf;PDF;Pending API Update;eng;learning object, Text;None;None
+o:7449;Bookmark - Usability and UX Evaluation;GREEN;True;0;None;oefos2012:102024;Usability Research;None;None;None;None;image/png;Bild (PNG);Pending API Update;eng;learning object, Image;None;None
+o:7317;Fragezeichen einzeln;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:7314;Cycle;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:7676;OER Policy der USTP – University of Applied Sciences St. Pölten;GREEN;True;0;None;oefos2012:503006;Bildungsforschung;None;None;None;None;application/pdf;PDF;Pending API Update;deu;learning object, Other;None;None
+o:7319;Graph;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:7323;OER;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:7333;Schritte;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:7326;Onlineunterricht;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:7320;Headset;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:7337;Welt;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:7322;Moodle;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:7331;Podest;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:7325;Onlineressourcen;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:7328;Pfeil links;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:7316;eCampus;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:7334;Super!;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:7312;Abzeichen;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:7321;Marienkäfer;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:7318;Fragezeichen;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:7327;Open;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:7332;Präsentation;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:7324;Onlinelehre;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:7329;Pfeil rechts;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:7336;Video;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:7313;Agenda;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:7330;Pin;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:7240;Vielfalt, Qualität & Aktivismus - Herausforderungen für den Journalismus (Universität Wien);RED;False;0;MISSING_DISCIPLINE;None;None;None;None;None;None;audio/mpeg;Audio (MP3);Pending API Update;deu;learning object, Audio Recording;None;None
+o:7241;Was ist Journalismus?;RED;False;0;MISSING_DISCIPLINE;None;None;None;None;None;None;audio/mpeg;Audio (MP3);Pending API Update;deu;learning object, Audio Recording;None;None
+o:7388;Foliensatz des Online-Kickoff-Meetings der OER-Practitioner-Ausbildung am 22.09.2025;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;application/pdf;PDF;Pending API Update;deu;learning object, Text;None;None
+o:7239;Diskursanregungen aus der Journalismusforschung (Medienhaus Wien);RED;False;0;MISSING_DISCIPLINE;None;None;None;None;None;None;audio/mpeg;Audio (MP3);Pending API Update;deu;learning object, Audio Recording;None;None
+o:5907;Gedankenblase;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5928;Wurzeln;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5918;Sektgläser;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5932;Zweiergespräch;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5885;Staff Training;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;application/vnd.openxmlformats-officedocument.wordprocessingml.document;MS Word;Pending API Update;eng;learning object, Text;None;None
+o:5902;Computer;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5887;3 Personen;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5892;30 Minuten;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5900;Buch;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5930;Zwei Puzzleteile;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5924;Teetasse;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5890;15 Minuten;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5897;Baum 2;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5926;Wecker;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5921;Sprechblase eckig;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5911;Kaffeetasse;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5929;Zielscheibe;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5916;Puzzleteil einzeln;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5919;Sonne;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5883;Austausch;GREEN;True;0;None;oefos2012:503006;Bildungsforschung;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5925;Wachstum;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5906;Fernglas;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5914;Pokal;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5912;Luftballon;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5931;Zweiergespräch am Tisch;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5915;Person;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5903;Diskussion;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5898;Baustelle;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5893;45 Minuten;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5908;Gießkanne;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5891;20 Minuten;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5917;Schild;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5920;Sprachrohr;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5910;Glühbirne;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5888;5 Minuten;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5922;Sprechblase rund;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5889;10 Minuten;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5913;Lupe;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5905;Essen;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5901;Checkbox;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5894;Abschlusshut;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5895;Achtung!;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5909;Gipfel;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5927;Weg;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5896;Baum;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5884;OER-Weiterbildungskonzept FH St. Pölten;RED;False;2;MISSING_DISCIPLINE;None;None;None;None;105237154X, 4117622-4;Open educational Resources, Weiterbildung;application/pdf;PDF;Pending API Update;deu;learning object, Text;None;None
+o:5899;Berge;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5904;Dokument;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
+o:5923;Stift;GREEN;True;0;None;oefos2012:503018;Hochschuldidaktik;None;None;None;None;image/png;Bild (PNG);Pending API Update;deu;learning object, Image;None;None
