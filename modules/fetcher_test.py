@@ -48,16 +48,8 @@ def harvest_pids_from_set(set_name: str = "oer") -> List[str]:
         return []
 
 def harvest_oer_data(set_name: str = "oer", classification_id: Optional[str] = None, **kwargs) -> List[Dict[str, Any]]:
-    """
-    Sammelt alle JSON-LD Datensätze des OER-Sets.
-    Akzeptiert 'classification_id' und flexible Keyword-Argumente (**kwargs),
-    um Abstürze mit einer unveränderten main.py zu verhindern.
-    """
-    # Bestimme das Ziel-Set. Wenn nichts übergeben wird, greift der Standard 'oer'
+    """Sammelt JSON-LD Datensätze und protokolliert fehlgeschlagene Downloads."""
     target_set = set_name
-    
-    # Falls in der main.py das oer_profile['classification_id'] den Wert 'oer' enthält,
-    # nutzen wir diesen als Set-Namen.
     if classification_id and classification_id != "YA8R-1M0D":
         target_set = classification_id
 
@@ -66,11 +58,30 @@ def harvest_oer_data(set_name: str = "oer", classification_id: Optional[str] = N
         return []
 
     print(f"-> {len(pids)} Objekte im Set '{target_set}' lokalisiert. Starte Download...")
+    
     jsonld_results = []
+    failed_pids = []
+    jsonld_results = []
+    failed_pids = []
+
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         future_to_pid = {executor.submit(fetch_single_jsonld, pid): pid for pid in pids}
         for future in as_completed(future_to_pid):
-            data = future.result()
-            if data:
-                jsonld_results.append(data)
+            pid = future_to_pid[future]
+            try:
+                data = future.result()
+                if data:
+                    # Injiziere die PID direkt in den Datensatz
+                    data["_harvester_pid"] = pid
+                    jsonld_results.append(data)
+                else:
+                    failed_pids.append(pid)
+            except Exception:
+                failed_pids.append(pid)
+
+    # Fehlermeldung im Terminal ausgeben
+    if failed_pids:
+        print(f"\n[Warnung] {len(failed_pids)} Objekte konnten nicht geladen werden (Timeout/404/403):")
+        print(f"          Betroffene PIDs: {', '.join(failed_pids)}\n")
+
     return jsonld_results

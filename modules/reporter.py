@@ -43,7 +43,7 @@ def generate_csv_report(compliance_records: List[Dict[str, Any]], output_filepat
         "object_id", "title", "status", "visibility", "gold_indicators_found", 
         "missing_fields", "oefos_ids", "oefos_labels", "bk_ids", "bk_labels", 
         "gnd_ids", "gnd_labels", "mime_types", "file_formats",
-        "date_published", "language", "object_types", "doi_internal", "doi_external"
+        "date_published", "year_published", "language", "object_types", "doi_internal", "doi_external"
     ]
 
     # Verzeichnis erstellen, falls es noch nicht existiert (z.B. nach frischem Klonen)
