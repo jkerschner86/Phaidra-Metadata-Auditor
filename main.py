@@ -85,6 +85,8 @@ def main():
             # Das reine JSON-LD an den Analyzer übergeben
             record = analyzer.analyze_uploader_metadata(metadata_content, profiles)
             
+            record["object_id"] = pid
+
             # Das OAI-Datum direkt in den Datensatz injizieren (ersetzt "Pending API Update")
             record["date_published"] = api_date
 
