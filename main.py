@@ -4,6 +4,7 @@ from datetime import datetime
 from modules import fetcher
 from modules import analyzer
 from modules import reporter
+from modules import visualizer
 
 def main():
     print("=" * 60)
@@ -17,6 +18,7 @@ def main():
     timestamp = datetime.now().strftime("%Y-%m-%d_%H%M")
     filename = f"audit_report_{timestamp}.csv"
     OUTPUT_CSV_PATH = os.path.join(BASE_DIR, "Output", filename)
+    OUTPUT_PNG_PATH = os.path.join(BASE_DIR, "Output", f"dashboard_{timestamp}.png")
 
     # 2. KONFIGURATION ZENTRAL LADEN (Variante A)
     try:
@@ -113,6 +115,12 @@ def main():
     except Exception as e:
         print(f"[CRITICAL ERROR] Erstellung des Reports fehlgeschlagen: {e}")
         return
+    print("\n[INFO] Generiere visuelles Dashboard...")
+    try:
+        visualizer.generate_dashboard(compliance_records, OUTPUT_PNG_PATH)
+        print(f"[SUCCESS] Dashboard erfolgreich gespeichert unter: {OUTPUT_PNG_PATH}")
+    except Exception as e:
+        print(f"[ERROR] Erstellung des Dashboards fehlgeschlagen: {e}")
 
     print("\n" + "=" * 60)
     print("Auditor-Pipeline erfolgreich beendet.")
