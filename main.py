@@ -18,7 +18,7 @@ def main():
     timestamp = datetime.now().strftime("%Y-%m-%d_%H%M")
     filename = f"audit_report_{timestamp}.csv"
     OUTPUT_CSV_PATH = os.path.join(BASE_DIR, "Output", filename)
-    OUTPUT_PNG_PATH = os.path.join(BASE_DIR, "Output", f"dashboard_{timestamp}.png")
+    OUTPUT_PNG_PATH = os.path.join(BASE_DIR, "Output", f"audit_dashboard_{timestamp}.png")
 
     # 2. KONFIGURATION ZENTRAL LADEN (Variante A)
     try:
