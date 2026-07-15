@@ -20,21 +20,35 @@ try:
 except Exception:
     pass
 
-def extract_all_dois(obj: Any) -> List[str]:
-    """Durchsucht rekursiv den gesamten Baum nach dem DOI-Muster (10.XXXX/YYYY)."""
-    dois = []
-    if isinstance(obj, dict):
-        for k, v in obj.items():
-            dois.extend(extract_all_dois(v))
-    elif isinstance(obj, list):
-        for item in obj:
-            dois.extend(extract_all_dois(item))
-    elif isinstance(obj, str):
-        # Regex filtert exakt die DOI heraus, unabhängig von Prefix oder URL-Struktur
-        match = re.search(r'(10\.\d{4,9}/[-._;()/:a-zA-Z0-9]+)', obj)
-        if match:
-            dois.append(match.group(1))
-    return dois
+def extract_identifiers(obj: Any) -> Dict[str, List[str]]:
+    """Durchsucht rekursiv den gesamten Baum nach DOIs, ORCIDs und RORs via Regex."""
+    found = {"dois": [], "orcid": [], "ror": []}
+    
+    def _scan(node):
+        if isinstance(node, dict):
+            for v in node.values():
+                _scan(v)
+        elif isinstance(node, list):
+            for item in node:
+                _scan(item)
+        elif isinstance(node, str):
+            # DOI Filter
+            doi_match = re.search(r'(10\.\d{4,9}/[-._;()/:a-zA-Z0-9]+)', node)
+            if doi_match: 
+                found["dois"].append(doi_match.group(1))
+            
+            # ORCID Filter (Format: XXXX-XXXX-XXXX-XXXX)
+            orcid_match = re.search(r'(\d{4}-\d{4}-\d{4}-\d{3}[0-9X])', node)
+            if orcid_match: 
+                found["orcid"].append(orcid_match.group(1))
+            
+            # ROR Filter (Format: ror.org/XXXXXXXXX)
+            ror_match = re.search(r'(ror\.org/[a-zA-Z0-9]+)', node)
+            if ror_match: 
+                found["ror"].append("https://" + ror_match.group(1))
+                
+    _scan(obj)
+    return found
 
 def get_phaidra_node(data: Dict[str, Any]) -> Dict[str, Any]:
     """Findet den eigentlichen Metadaten-Knoten im @graph Array."""
@@ -246,21 +260,25 @@ def analyze_uploader_metadata(data: Dict[str, Any], profiles: Dict[str, Any] = N
                     object_types.append(val)
 
 # ---------------------------------------------------------
-    # 8. DOIs
+    # 8. IDENTIFIERS (DOIs, ORCID, ROR)
     # ---------------------------------------------------------
-    # WICHTIG: Suche im gesamten 'data' Graphen, nicht nur im isolierten 'node'!
-    all_dois = list(set(extract_all_dois(data)))
+    identifiers = extract_identifiers(data)
     
-    # Wir formatieren sie für das CSV direkt als saubere URLs
+    all_dois = list(set(identifiers["dois"]))
+    orcid = list(set(identifiers["orcid"]))
+    ror = list(set(identifiers["ror"]))
+    
     internal_dois = [f"https://doi.org/{d}" for d in all_dois if "10.60522" in d]
     external_dois = [f"https://doi.org/{d}" for d in all_dois if "10.60522" not in d]
 
     # ---------------------------------------------------------
-    # 9. AMPEL
+    # 9. AMPEL & AUSWERTUNG
     # ---------------------------------------------------------
+    gold_indicators = len(gnd_ids) #+ len(orcid) + len(ror)
+    
     if not title_valid or not desc_valid or not has_valid_license or not has_discipline:
         status, visibility = "RED", False
-    elif len(gnd_ids) > 0:
+    elif gold_indicators > 0:
         status, visibility = "GOLD", True
     else:
         status, visibility = "GREEN", True
@@ -270,7 +288,7 @@ def analyze_uploader_metadata(data: Dict[str, Any], profiles: Dict[str, Any] = N
         "title": title,
         "status": status,
         "visibility": visibility,
-        "gold_indicators_found": len(gnd_ids),
+        "gold_indicators_found": gold_indicators,
         "missing_fields": missing_fields if missing_fields else ["None"],
         "oefos_ids": oefos_ids,
         "oefos_labels": oefos_labels,
@@ -278,6 +296,8 @@ def analyze_uploader_metadata(data: Dict[str, Any], profiles: Dict[str, Any] = N
         "bk_labels": bk_labels,
         "gnd_ids": gnd_ids,
         "gnd_labels": gnd_labels,
+        "orcid": orcid if orcid else ["None"],
+        "ror": ror if ror else ["None"],
         "mime_types": mime_types if mime_types else ["Unknown"],
         "file_formats": file_formats if file_formats else ["Unknown"],
         "language": language,
