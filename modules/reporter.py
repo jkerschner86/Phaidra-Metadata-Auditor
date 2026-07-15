@@ -50,7 +50,7 @@ def generate_csv_report(compliance_records: List[Dict[str, Any]], output_filepat
     os.makedirs(os.path.dirname(output_filepath), exist_ok=True)
 
     try:
-        with open(output_filepath, mode="w", newline="", encoding="utf-8") as csv_file:
+        with open(output_filepath, mode="w", newline="", encoding="utf-8-sig") as csv_file:
             # Verwendung von DictWriter eliminiert positionelle Fehler
             writer = csv.DictWriter(csv_file, fieldnames=headers, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL)
             
