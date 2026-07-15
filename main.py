@@ -1,5 +1,6 @@
 import os
 import json
+from datetime import datetime
 from modules import fetcher
 from modules import analyzer
 from modules import reporter
@@ -12,7 +13,10 @@ def main():
     # 1. PFADE DEFINIEREN (Absolut, basierend auf dem Speicherort dieser main.py)
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     PROFILES_PATH = os.path.join(BASE_DIR, "config", "profiles.json")
-    OUTPUT_CSV_PATH = os.path.join(BASE_DIR, "Output", "audit_report.csv")
+    # Zeitstempel generieren und dynamischen Dateinamen bauen
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H%M")
+    filename = f"audit_report_{timestamp}.csv"
+    OUTPUT_CSV_PATH = os.path.join(BASE_DIR, "Output", filename)
 
     # 2. KONFIGURATION ZENTRAL LADEN (Variante A)
     try:
