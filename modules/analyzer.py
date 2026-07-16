@@ -21,8 +21,8 @@ except Exception:
     pass
 
 def extract_identifiers(obj: Any) -> Dict[str, List[str]]:
-    """Durchsucht rekursiv den gesamten Baum nach DOIs, ORCIDs und RORs via Regex."""
-    found = {"dois": [], "orcid": [], "ror": []}
+    """Durchsucht rekursiv den Baum nach ORCIDs und RORs (DOIs haben eigenes Dual-System)."""
+    found = {"orcid": [], "ror": []}
     
     def _scan(node):
         if isinstance(node, dict):
@@ -32,11 +32,6 @@ def extract_identifiers(obj: Any) -> Dict[str, List[str]]:
             for item in node:
                 _scan(item)
         elif isinstance(node, str):
-            # DOI Filter
-            doi_match = re.search(r'(10\.\d{4,9}/[-._;()/:a-zA-Z0-9]+)', node)
-            if doi_match: 
-                found["dois"].append(doi_match.group(1))
-            
             # ORCID Filter (Format: XXXX-XXXX-XXXX-XXXX)
             orcid_match = re.search(r'(\d{4}-\d{4}-\d{4}-\d{3}[0-9X])', node)
             if orcid_match: 
@@ -260,14 +255,46 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
                     object_types.append(val)
 
 # ---------------------------------------------------------
-    # 8. IDENTIFIERS (DOIs, ORCID, ROR)
+    # 8. IDENTIFIERS - DUAL SYSTEM FÜR DOIs
     # ---------------------------------------------------------
+    all_dois = []
+
+    # EBENE 1: Strikte Pfad-Suche (rdam:P30004 -> ids:doi)
+    rda_ids = node.get("rdam:P30004", data.get("rdam:P30004", []))
+    rda_ids = rda_ids if isinstance(rda_ids, list) else [rda_ids]
+
+    for ident in rda_ids:
+        if isinstance(ident, dict) and ident.get("@type") == "ids:doi":
+            val = ident.get("@value")
+            if val:
+                all_dois.append(val)
+
+    # EBENE 2: Regex-Fallback (Penalty), falls Ebene 1 leer war
+    if not all_dois:
+        def _scan_dois(obj):
+            found = []
+            if isinstance(obj, dict):
+                for v in obj.values(): found.extend(_scan_dois(v))
+            elif isinstance(obj, list):
+                for item in obj: found.extend(_scan_dois(item))
+            elif isinstance(obj, str):
+                match = re.search(r'(10\.\d{4,9}/[-._;()/:a-zA-Z0-9]+)', obj)
+                if match: found.append(match.group(1))
+            return found
+
+        fallback_dois = _scan_dois(data)
+        if fallback_dois:
+            all_dois.extend(fallback_dois)
+            # PENALTY VERGEBEN: DOI existiert, ist aber strukturell falsch abgelegt
+            missing_fields.append("DOI_STRUCTURALLY_MISPLACED")
+
+    # ORCID & ROR (Noch reines Regex, wird im nächsten Schritt umgebaut)
     identifiers = extract_identifiers(data)
-    
-    all_dois = list(set(identifiers["dois"]))
     orcid = list(set(identifiers["orcid"]))
     ror = list(set(identifiers["ror"]))
-    
+
+    # DOI Listen aufteilen & bereinigen
+    all_dois = list(set(all_dois))
     internal_dois = [f"https://doi.org/{d}" for d in all_dois if "10.60522" in d]
     external_dois = [f"https://doi.org/{d}" for d in all_dois if "10.60522" not in d]
 

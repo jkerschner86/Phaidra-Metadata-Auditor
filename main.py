@@ -14,7 +14,6 @@ def main():
     # 1. PFADE DEFINIEREN
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     RULES_PATH = os.path.join(BASE_DIR, "config", "audit_rules.json")
-    
     timestamp = datetime.now().strftime("%Y-%m-%d_%H%M")
     OUTPUT_CSV_PATH = os.path.join(BASE_DIR, "Output", f"audit_report_{timestamp}.csv")
     OUTPUT_PNG_PATH = os.path.join(BASE_DIR, "Output", f"dashboard_{timestamp}.png")
