@@ -1,0 +1,12 @@
+{
+  "oer": {
+    "name": "Open Educational Resources (OER)",
+    "mandatory_fields": ["title", "description", "license", "discipline"],
+    "gold_indicators": ["gnd"]
+  },
+  "research_data": {
+    "name": "Research Data (Forschungsdaten)",
+    "mandatory_fields": ["title", "description", "orcid", "doi_internal"],
+    "gold_indicators": ["ror", "gnd"]
+  }
+}

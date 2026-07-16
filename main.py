@@ -11,65 +11,44 @@ def main():
     print("Phaidra Metadata Auditor - Pipeline gestartet")
     print("=" * 60)
 
-    # 1. PFADE DEFINIEREN (Absolut, basierend auf dem Speicherort dieser main.py)
+    # 1. PFADE DEFINIEREN
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    PROFILES_PATH = os.path.join(BASE_DIR, "config", "profiles.json")
-    # Zeitstempel generieren und dynamischen Dateinamen bauen
-    timestamp = datetime.now().strftime("%Y-%m-%d_%H%M")
-    filename = f"audit_report_{timestamp}.csv"
-    OUTPUT_CSV_PATH = os.path.join(BASE_DIR, "Output", filename)
-    OUTPUT_PNG_PATH = os.path.join(BASE_DIR, "Output", f"audit_dashboard_{timestamp}.png")
-
-    # 2. KONFIGURATION ZENTRAL LADEN (Variante A)
-    try:
-        with open(PROFILES_PATH, "r", encoding="utf-8") as f:
-            profiles = json.load(f)
-        print(f"[SUCCESS] Konfiguration erfolgreich geladen aus: {PROFILES_PATH}")
-    except FileNotFoundError:
-        print(f"[CRITICAL ERROR] 'profiles.json' wurde nicht gefunden unter: {PROFILES_PATH}")
-        print("Abbruch der Pipeline.")
-        return
-    except json.JSONDecodeError as e:
-        print(f"[CRITICAL ERROR] Syntaxfehler in der 'profiles.json': {e}")
-        print("Abbruch der Pipeline.")
-        return
-
-# 3. DATA FETCHING (Interaktive Parameter-Abfrage)
-    print("\n[INFO] Konfiguration des Datenabrufs")
+    RULES_PATH = os.path.join(BASE_DIR, "config", "audit_rules.json")
     
-    # 1. Abfrage: Objekt-Typ (Was?)
-    while True:
-        type_input = input("Welcher Objekt-Typ soll analysiert werden? (Aktuell verfügbar: 1 = OER): ").strip()
-        if type_input == "1":
-            target_scope = "oer"
-            break
-        else:
-            print("[Hinweis] Zukünftige Module (wie RD) sind noch nicht implementiert. Bitte '1' für OER wählen.")
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H%M")
+    OUTPUT_CSV_PATH = os.path.join(BASE_DIR, "Output", f"audit_report_{timestamp}.csv")
+    OUTPUT_PNG_PATH = os.path.join(BASE_DIR, "Output", f"dashboard_{timestamp}.png")
 
-    # 2. Abfrage: Zeitraum (Wann?)
-    while True:
-        year_input = input("Für welchen Zeitraum soll der Audit laufen? (Jahreszahl ab 2014 ODER 'alle' für den gesamten Zeitraum): ").strip().lower()
-        
-        if year_input in ["alle", "all"]:
-            target_year = "ALL"
-            break
-        else:
-            try:
-                target_year = int(year_input)
-                if target_year >= 2014:
-                    break
-                else:
-                    print("Das Jahr muss mindestens 2014 sein.")
-            except ValueError:
-                print("Bitte eine gültige Jahreszahl oder das Wort 'alle' eingeben.")
-
-    print("\n[INFO] Starte Datenabruf via Fetcher...")
+    # 2. REGELWERK LADEN & PROFIL WÄHLEN
     try:
-        raw_objects = fetcher.harvest_oer_data(scope=target_scope, year=target_year) 
-        print(f"[SUCCESS] {len(raw_objects)} Objekte erfolgreich abgerufen.")
+        with open(RULES_PATH, "r", encoding="utf-8") as f:
+            all_rules = json.load(f)
     except Exception as e:
-        print(f"[CRITICAL ERROR] Fehler beim Datenabruf: {e}")
+        print(f"[CRITICAL ERROR] Konnte audit_rules.json nicht laden: {e}")
         return
+
+    print("\nVerfügbare Audit-Profile:")
+    print("1: Open Educational Resources (OER)")
+    print("2: Research Data (Forschungsdaten)")
+    
+    choice = input("Bitte Profilnummer wählen (1 oder 2): ").strip()
+    if choice == "2":
+        active_profile_key = "research_data"
+    else:
+        active_profile_key = "oer"
+        
+    active_rules = all_rules[active_profile_key]
+    print(f"\n[INFO] Aktives Profil: {active_rules['name']}")
+
+# 3. DATA FETCHING
+    print("\n[INFO] Konfiguration des Datenabrufs")
+    year_choice = input("Für welchen Zeitraum soll der Audit laufen? (Jahreszahl ab 2014 ODER 'alle'): ").strip()
+    
+    print("\n[INFO] Starte Datenabruf via Fetcher...")
+    
+    # Der Scope wird nun 100% dynamisch aus der Profil-Wahl (JSON) abgeleitet
+    raw_objects = fetcher.harvest_oer_data(active_profile_key, year_choice)
+    
 
 # 4. DATA ANALYSIS (Verarbeitung mit injizierter Konfiguration)
     print("\n[INFO] Starte Metadaten-Analyse und Format-Mapping...")
@@ -88,8 +67,8 @@ def main():
                 api_date = "Unknown"
                 pid = item.get("@id", f"Unbekannt (Index {idx})") if isinstance(item, dict) else f"Unbekannt (Index {idx})"
 
-            # Das reine JSON-LD an den Analyzer übergeben
-            record = analyzer.analyze_uploader_metadata(metadata_content, profiles)
+            # Das reine JSON-LD und das aktive Regelwerk an den Analyzer übergeben
+            record = analyzer.analyze_uploader_metadata(metadata_content, active_rules)
             
             record["object_id"] = pid
 
@@ -117,7 +96,13 @@ def main():
         return
     print("\n[INFO] Generiere visuelles Dashboard...")
     try:
-        visualizer.generate_dashboard(compliance_records, OUTPUT_PNG_PATH)
+        # Wir übergeben nun zusätzlich den Profilnamen und die Jahreswahl
+        visualizer.generate_dashboard(
+            compliance_records, 
+            OUTPUT_PNG_PATH, 
+            active_rules["name"], 
+            year_choice
+        )
         print(f"[SUCCESS] Dashboard erfolgreich gespeichert unter: {OUTPUT_PNG_PATH}")
     except Exception as e:
         print(f"[ERROR] Erstellung des Dashboards fehlgeschlagen: {e}")

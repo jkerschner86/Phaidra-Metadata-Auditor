@@ -32,21 +32,22 @@ def fetch_single_jsonld(pid: str, api_date: str) -> Optional[Dict[str, Any]]:
 def harvest_pids_from_oai(scope: str, year: Union[int, str]) -> Dict[str, str]:
     """
     Nutzt OAI-PMH ListIdentifiers inkl. ResumptionTokens.
-    Akzeptiert ein spezifisches Jahr oder 'ALL' für den gesamten Zeitraum ab 2014.
+    Akzeptiert ein spezifisches Jahr oder 'ALL'/'ALLE' für den gesamten Zeitraum ab 2014.
     """
     params = {
         "verb": "ListIdentifiers",
         "metadataPrefix": "oai_dc"
     }
 
-    # Datums-Logik dynamisch aufbauen
-    if str(year).upper() == "ALL":
+    # HIER IST DER FIX: Datums-Logik dynamisch und robust aufbauen
+    year_str = str(year).strip().upper()
+    if year_str in ["ALL", "ALLE"]:
         # Ab 2014 bis heute (kein 'until' Parameter nötig)
         params["from"] = "2014-01-01T00:00:00Z"
         print(f"[Fetcher] Frage PIDs ab (Scope: {scope}, Gesamter Zeitraum ab 2014)...")
     else:
-        if int(year) < 2014:
-            print("[Fehler] Das Jahr muss >= 2014 sein. Breche ab.")
+        if not str(year).strip().isdigit() or int(year) < 2014:
+            print(f"[Fehler] Ungültiges Jahr: '{year}'. Bitte 'alle' oder eine Zahl ab 2014 eingeben.")
             return {}
         # Spezifisches Jahr eingrenzen
         params["from"] = f"{year}-01-01T00:00:00Z"
@@ -98,7 +99,6 @@ def harvest_pids_from_oai(scope: str, year: Union[int, str]) -> Dict[str, str]:
 def harvest_oer_data(scope: str = "oer", year: Union[int, str] = "ALL") -> List[Dict[str, Any]]:
     """Sammelt JSON-LD Datensätze basierend auf den gefundenen PIDs parallel ein."""
     
-    # HIER war der Variablen-Fehler (scope statt set_name)
     pids_dict = harvest_pids_from_oai(scope, year)
     if not pids_dict:
         return []

@@ -9,8 +9,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from collections import Counter
 
-def generate_dashboard(records: list, output_path: str):
-    """Aggregiert die Daten und zeichnet das 3x3 Dashboard."""
+def generate_dashboard(records: list, output_path: str, profile_name: str, timeframe: str):
+    """Aggregiert die Daten und zeichnet das 3x3 Dashboard mit dynamischem Titel."""
     
     # 1. DATEN AGGREGIEREN
     statuses = Counter(r.get("status") for r in records)
@@ -54,7 +54,14 @@ def generate_dashboard(records: list, output_path: str):
     # Nutze ein klassisches Theme für saubere, wissenschaftliche Optik
     plt.style.use('bmh')
     fig, axes = plt.subplots(3, 3, figsize=(22, 16))
-    fig.suptitle("Phaidra Metadata Auditor - Executive Summary", fontsize=24, fontweight='bold', y=0.98)
+    
+    # NEU: Dynamischen Titel generieren
+    display_time = "Gesamter Zeitraum" if str(timeframe).lower() in ["all", "alle"] else str(timeframe)
+    # Kurzer Name für OER aus Profilnamen extrahieren, falls gewünscht, ansonsten voller Name
+    short_profile = "OER" if "OER" in profile_name else profile_name
+    
+    dynamic_title = f"PMA - Summary - {short_profile} - {display_time}"
+    fig.suptitle(dynamic_title, fontsize=24, fontweight='bold', y=0.98)
     
     color_map = {"RED": "#e74c3c", "GREEN": "#2ecc71", "GOLD": "#f1c40f"}
 

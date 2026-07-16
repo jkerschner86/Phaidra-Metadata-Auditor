@@ -69,7 +69,7 @@ def get_phaidra_node(data: Dict[str, Any]) -> Dict[str, Any]:
                 return node
     return data
 
-def analyze_uploader_metadata(data: Dict[str, Any], profiles: Dict[str, Any] = None) -> Dict[str, Any]:
+def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Dict[str, Any]:
     # ---------------------------------------------------------
     # 1. PID ZUVERLÄSSIG EXTRAHIEREN (Deine funktionierende Original-Logik)
     # ---------------------------------------------------------
@@ -271,24 +271,51 @@ def analyze_uploader_metadata(data: Dict[str, Any], profiles: Dict[str, Any] = N
     internal_dois = [f"https://doi.org/{d}" for d in all_dois if "10.60522" in d]
     external_dois = [f"https://doi.org/{d}" for d in all_dois if "10.60522" not in d]
 
+# ---------------------------------------------------------
+    # 9. AMPEL & AUSWERTUNG (Dynamisch via audit_rules.json)
     # ---------------------------------------------------------
-    # 9. AMPEL & AUSWERTUNG
-    # ---------------------------------------------------------
-    gold_indicators = len(gnd_ids) #+ len(orcid) + len(ror)
+    status = "GREEN"
+    visibility = True
     
-    if not title_valid or not desc_valid or not has_valid_license or not has_discipline:
+    mandatory = rules.get("mandatory_fields", [])
+    
+    # 9a. PFLICHTFELDER PRÜFEN (RED Fallback)
+    if "title" in mandatory and not title_valid:
         status, visibility = "RED", False
-    elif gold_indicators > 0:
-        status, visibility = "GOLD", True
-    else:
-        status, visibility = "GREEN", True
+    if "description" in mandatory and not desc_valid:
+        status, visibility = "RED", False
+    if "license" in mandatory and not has_valid_license:
+        status, visibility = "RED", False
+    if "discipline" in mandatory and not has_discipline:
+        status, visibility = "RED", False
+    if "orcid" in mandatory and not orcids:
+        status, visibility = "RED", False
+        if "MISSING_ORCID" not in missing_fields: missing_fields.append("MISSING_ORCID")
+    if "doi_internal" in mandatory and not internal_dois:
+        status, visibility = "RED", False
+        if "MISSING_INTERNAL_DOI" not in missing_fields: missing_fields.append("MISSING_INTERNAL_DOI")
+
+    # 9b. GOLD INDIKATOREN BERECHNEN
+    gold_count = 0
+    gold_indicators_list = rules.get("gold_indicators", [])
+    
+    if "gnd" in gold_indicators_list:
+        gold_count += len(gnd_ids)
+    if "ror" in gold_indicators_list:
+        gold_count += len(ror)
+    if "orcid" in gold_indicators_list: # Falls ORCID im Profil Gold wert sein soll
+        gold_count += len(orcid)
+
+    # Wenn alles grün ist und Gold-Indikatoren gefunden wurden -> GOLD
+    if status != "RED" and gold_count > 0:
+        status = "GOLD"
 
     return {
         "object_id": pid,
         "title": title,
         "status": status,
         "visibility": visibility,
-        "gold_indicators_found": gold_indicators,
+        "gold_indicators_found": gold_count,
         "missing_fields": missing_fields if missing_fields else ["None"],
         "oefos_ids": oefos_ids,
         "oefos_labels": oefos_labels,
