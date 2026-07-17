@@ -50,7 +50,7 @@ def generate_dashboard(records: list, output_path: str, profile_name: str, timef
             ext_dois = [d for d in r.get("doi_external", []) if d != "None"]
             trend_doi[y]["External"] += len(ext_dois)
 
-# 2. PLOTTING SETUP
+    # 2. PLOTTING SETUP
     plt.style.use('bmh')
     fig, axes = plt.subplots(3, 3, figsize=(22, 16))
     
@@ -183,8 +183,44 @@ def generate_dashboard(records: list, output_path: str, profile_name: str, timef
         ax.text(0.5, 0.5, "No GND data", ha='center', va='center')
         ax.axis('off')
 
-    # 3,3: Placeholder for symmetry / Empty space intentionally left clean
-    axes[2, 2].axis('off')
+    # --- ROW 3: NEW PUBLICATION TIMELINE ---
+    
+    # 3,3: Publication Timeline (Year-Month)
+    pub_months = [
+        r.get("date_published", "")[:7] 
+        for r in records 
+        if r.get("date_published") and len(r.get("date_published", "")) >= 7
+    ]
+    
+    ax_time = axes[2, 2]
+    
+    if pub_months:
+        month_counts = Counter(pub_months)
+        
+        # Zwingend chronologisch sortieren
+        sorted_months = sorted(month_counts.keys())
+        counts = [month_counts[m] for m in sorted_months]
+        
+        # Bar-Chart zeichnen
+        ax_time.bar(sorted_months, counts, color='#3498db', edgecolor='black', zorder=3)
+        ax_time.grid(axis='y', linestyle='--', alpha=0.7, zorder=0)
+        ax_time.set_title('Publication Timeline', fontweight='bold')
+        ax_time.set_ylabel('Number of Objects')
+        
+        # 45-Grad Rotation für die Lesbarkeit
+        ax_time.tick_params(axis='x', rotation=45, labelsize=9)
+        
+        # Dynamische x-Achsen Bereinigung (verhindert Text-Überlappung bei Zeiträumen > 1 Jahr)
+        if len(sorted_months) > 12:
+            # Berechnet dynamisch die Schrittweite (max. ~10-12 Labels auf der Achse)
+            step = len(sorted_months) // 10 + 1
+            for i, label in enumerate(ax_time.xaxis.get_ticklabels()):
+                if i % step != 0 and i != len(sorted_months) - 1: # Letztes Label idealerweise behalten
+                    label.set_visible(False)
+    else:
+        ax_time.text(0.5, 0.5, 'No temporal data available', ha='center', va='center', color='gray')
+        ax_time.set_title('Publication Timeline', fontweight='bold')
+        ax_time.axis('off')
 
     # 3. RENDER & SAVE
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
