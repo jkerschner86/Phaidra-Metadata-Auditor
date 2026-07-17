@@ -257,6 +257,8 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
 # ---------------------------------------------------------
     # 8. IDENTIFIERS - DUAL SYSTEM FÜR DOIs
     # ---------------------------------------------------------
+    
+    # --- A) DOI DUAL SYSTEM ---
     all_dois = []
 
     # EBENE 1: Strikte Pfad-Suche (rdam:P30004 -> ids:doi)
@@ -288,13 +290,86 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
             # PENALTY VERGEBEN: DOI existiert, ist aber strukturell falsch abgelegt
             missing_fields.append("DOI_STRUCTURALLY_MISPLACED")
 
-    # ORCID & ROR (Noch reines Regex, wird im nächsten Schritt umgebaut)
-    identifiers = extract_identifiers(data)
-    orcid = list(set(identifiers["orcid"]))
-    ror = list(set(identifiers["ror"]))
+    # --- B & C) ORCID & ROR DUAL SYSTEM ---
 
-    # DOI Listen aufteilen & bereinigen
+    strict_orcids = []
+    strict_rors = []
+
+    # Ebene 1: Strikte Pfad-Suche für Personen/Einrichtungen und deren Affiliations
+    for key, val_list in node.items():
+        if key.startswith("role:") or key in ["dc:creator", "dc:contributor", "schema:author"]:
+            if not isinstance(val_list, list): 
+                val_list = [val_list]
+            
+            for item in val_list:
+                if not isinstance(item, dict): continue
+                
+                # 1. ORCID und ROR direkt in der Rolle suchen
+                matches = item.get("skos:exactMatch", item.get("exactMatch", []))
+                matches = matches if isinstance(matches, list) else [matches]
+                for match in matches:
+                    m_val = match if isinstance(match, str) else match.get("@value", match.get("@id", ""))
+                    
+                    o_match = re.search(r'(\d{4}-\d{4}-\d{4}-\d{3}[0-9X])', str(m_val))
+                    if o_match: strict_orcids.append(o_match.group(1))
+                        
+                    r_match = re.search(r'(ror\.org/[a-zA-Z0-9]+)', str(m_val))
+                    if r_match: strict_rors.append("https://" + r_match.group(1))
+
+                # 2. ROR in den Affiliations suchen (falls Einrichtung an Person hängt)
+                affiliations = item.get("schema:affiliation", [])
+                affiliations = affiliations if isinstance(affiliations, list) else [affiliations]
+                for affil in affiliations:
+                    if not isinstance(affil, dict): continue
+                    
+                    affil_matches = affil.get("skos:exactMatch", affil.get("exactMatch", []))
+                    affil_matches = affil_matches if isinstance(affil_matches, list) else [affil_matches]
+                    for a_match in affil_matches:
+                        a_val = a_match if isinstance(a_match, str) else a_match.get("@id", a_match.get("@value", ""))
+                        r_match = re.search(r'(ror\.org/[a-zA-Z0-9]+)', str(a_val))
+                        if r_match: strict_rors.append("https://" + r_match.group(1))
+
+    # Ebene 2: Regex-Fallback (ORCID)
+    if not strict_orcids:
+        def _scan_orcids(obj):
+            found = []
+            if isinstance(obj, dict):
+                for v in obj.values(): found.extend(_scan_orcids(v))
+            elif isinstance(obj, list):
+                for item in obj: found.extend(_scan_orcids(item))
+            elif isinstance(obj, str):
+                match = re.search(r'(\d{4}-\d{4}-\d{4}-\d{3}[0-9X])', obj)
+                if match: found.append(match.group(1))
+            return found
+
+        fallback_orcids = _scan_orcids(data)
+        if fallback_orcids:
+            strict_orcids.extend(fallback_orcids)
+            missing_fields.append("ORCID_STRUCTURALLY_MISPLACED")
+
+    # Ebene 2: Regex-Fallback (ROR)
+    if not strict_rors:
+        def _scan_rors(obj):
+            found = []
+            if isinstance(obj, dict):
+                for v in obj.values(): found.extend(_scan_rors(v))
+            elif isinstance(obj, list):
+                for item in obj: found.extend(_scan_rors(item))
+            elif isinstance(obj, str):
+                match = re.search(r'(ror\.org/[a-zA-Z0-9]+)', obj)
+                if match: found.append("https://" + match.group(1))
+            return found
+
+        fallback_rors = _scan_rors(data)
+        if fallback_rors:
+            strict_rors.extend(fallback_rors)
+            missing_fields.append("ROR_STRUCTURALLY_MISPLACED")
+
+    # --- D) Listen aufteilen & bereinigen ---
     all_dois = list(set(all_dois))
+    orcid = list(set(strict_orcids))
+    ror = list(set(strict_rors))
+    
     internal_dois = [f"https://doi.org/{d}" for d in all_dois if "10.60522" in d]
     external_dois = [f"https://doi.org/{d}" for d in all_dois if "10.60522" not in d]
 
