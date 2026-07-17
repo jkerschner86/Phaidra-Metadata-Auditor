@@ -50,18 +50,20 @@ def generate_dashboard(records: list, output_path: str, profile_name: str, timef
             ext_dois = [d for d in r.get("doi_external", []) if d != "None"]
             trend_doi[y]["External"] += len(ext_dois)
 
-    # 2. PLOTTING SETUP
-    # Nutze ein klassisches Theme für saubere, wissenschaftliche Optik
+# 2. PLOTTING SETUP
     plt.style.use('bmh')
     fig, axes = plt.subplots(3, 3, figsize=(22, 16))
     
-    # NEU: Dynamischen Titel generieren
-    display_time = "Gesamter Zeitraum" if str(timeframe).lower() in ["all", "alle"] else str(timeframe)
-    # Kurzer Name für OER aus Profilnamen extrahieren, falls gewünscht, ansonsten voller Name
+    # Dynamischen Titel generieren (Englisch & inkl. Grundgesamtheit)
+    display_time = "All Time" if str(timeframe).lower() in ["all", "alle"] else str(timeframe)
     short_profile = "OER" if "OER" in profile_name else profile_name
+    total_objects = len(records)
     
-    dynamic_title = f"PMA - Summary - {short_profile} - {display_time}"
+    dynamic_title = f"PMA - Summary - {short_profile} - {display_time}\nTotal Objects Audited: {total_objects}"
+    
+    # y-Wert und top-Margin anpassen, damit der 2-Zeiler nicht die Plots überlagert
     fig.suptitle(dynamic_title, fontsize=24, fontweight='bold', y=0.98)
+    fig.subplots_adjust(top=0.92) 
     
     color_map = {"RED": "#e74c3c", "GREEN": "#2ecc71", "GOLD": "#f1c40f"}
 
