@@ -47,7 +47,6 @@ def extract_identifiers(obj: Any) -> Dict[str, List[str]]:
 
 def get_phaidra_node(data: Dict[str, Any]) -> Dict[str, Any]:
     """Findet den eigentlichen Metadaten-Knoten im @graph Array."""
-    # Wir fügen bf:note als Suchkriterium hinzu!
     keys_to_check = ["dce:title", "dcterms:title", "bf:note", "edm:hasType"]
     
     if any(k in data for k in keys_to_check):
@@ -65,8 +64,17 @@ def get_phaidra_node(data: Dict[str, Any]) -> Dict[str, Any]:
     return data
 
 def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Dict[str, Any]:
+    
     # ---------------------------------------------------------
-    # 1. PID ZUVERLÄSSIG EXTRAHIEREN (Deine funktionierende Original-Logik)
+    # NEU: DYNAMISCHE VOKABULARE AUS PROFIL LADEN
+    # ---------------------------------------------------------
+    vocabularies = rules.get("allowed_vocabularies", {})
+    allowed_disciplines = vocabularies.get("discipline_prefixes", ["oefos2012:", "uri.gbv.de/terminology/bk/"])
+    allowed_licenses = vocabularies.get("license_domains", ["creativecommons.org", "spdx.org"])
+    gnd_prefixes = vocabularies.get("gnd_prefix", ["d-nb.info/gnd/"])
+
+    # ---------------------------------------------------------
+    # 1. PID ZUVERLÄSSIG EXTRAHIEREN
     # ---------------------------------------------------------
     pid = data.get("_harvester_pid")
     if not pid:
@@ -78,7 +86,6 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
         else:
             pid = "Unknown PID"
 
-    # 2. Jetzt erst den Node-Knoten für die Metadaten-Analyse isolieren
     node = get_phaidra_node(data)
     missing_fields = []
 
@@ -116,13 +123,12 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
         missing_fields.append("TITLE_MISSING")
 
     # ---------------------------------------------------------
-    # 3. DESCRIPTION (Inkl. Sanity Check und bf:note Support)
+    # 3. DESCRIPTION
     # ---------------------------------------------------------
     desc_valid = False
     has_desc = False
     desc_texts = []
 
-    # A) Standard-Felder
     for key in ["dce:description", "dcterms:description", "bf:summary"]:
         val = node.get(key)
         if val:
@@ -133,7 +139,6 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
                 else:
                     desc_texts.append(str(item))
 
-    # B) Fallback: bf:note (Deine Entdeckung implementiert)
     if not desc_texts:
         notes = node.get("bf:note", [])
         notes = notes if isinstance(notes, list) else [notes]
@@ -145,7 +150,6 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
                     if isinstance(label, dict) and "@value" in label:
                         desc_texts.append(label["@value"])
 
-    # C) Validierung auf Länge (Mindestens 15 Zeichen)
     for text in desc_texts:
         if text and text.strip():
             has_desc = True
@@ -159,7 +163,7 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
         missing_fields.append("DESCRIPTION_INSUFFICIENT_LENGTH")
 
     # ---------------------------------------------------------
-    # 4. LICENSE
+    # 4. LICENSE (Dynamisiert)
     # ---------------------------------------------------------
     rights_list = node.get("edm:rights", node.get("dcterms:rights", []))
     license_url = ""
@@ -170,12 +174,13 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
         else:
             license_url = str(first_right)
 
-    has_valid_license = "creativecommons.org" in license_url or "spdx.org" in license_url
+    # Prüft dynamisch gegen die Liste der erlaubten Domains aus der JSON
+    has_valid_license = any(domain in license_url for domain in allowed_licenses)
     if not has_valid_license:
         missing_fields.append("LICENSE_URL_MISSING_OR_INVALID")
 
     # ---------------------------------------------------------
-    # 5. SUBJECTS & DISZIPLINEN
+    # 5. SUBJECTS & DISZIPLINEN (Dynamisiert)
     # ---------------------------------------------------------
     subjects = node.get("dcterms:subject", node.get("dc:subject", []))
     subjects = subjects if isinstance(subjects, list) else [subjects]
@@ -203,23 +208,31 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
             if isinstance(match, dict): match = match.get("@id", match.get("@value", ""))
             if not isinstance(match, str): continue
             
-            if "d-nb.info/gnd/" in match:
-                gnd_ids.append(match.split("/gnd/")[-1])
-                gnd_labels.append(label_val)
+            # Dynamische GND Prüfung
+            if any(gnd_pref in match for gnd_pref in gnd_prefixes):
+                for gnd_pref in gnd_prefixes:
+                    if gnd_pref in match:
+                        gnd_ids.append(match.split(gnd_pref)[-1])
+                        gnd_labels.append(label_val)
+                        break
             
-            elif "oefos2012:" in match:
-                oefos_ids.append(match)
-                oefos_labels.append(label_val)
-            
-            elif "uri.gbv.de/terminology/bk/" in match:
-                bk_id = match.split("/bk/")[-1]
-                bk_ids.append(bk_id)
-                
-                # NEU: ID am Anfang des Labels wegschneiden (inkl. Leerzeichen)
-                clean_label = label_val
-                if clean_label.startswith(bk_id):
-                    clean_label = clean_label[len(bk_id):].strip()
-                bk_labels.append(clean_label)
+            # Dynamische Disziplin-Prüfung
+            elif any(disc_pref in match for disc_pref in allowed_disciplines):
+                for disc_pref in allowed_disciplines:
+                    if disc_pref in match:
+                        # Trennung für abwärtskompatiblen CSV-Export
+                        if "bk/" in disc_pref or "bk" in disc_pref.lower():
+                            bk_id = match.split(disc_pref)[-1]
+                            bk_ids.append(bk_id)
+                            clean_label = label_val
+                            if clean_label.startswith(bk_id):
+                                clean_label = clean_label[len(bk_id):].strip()
+                            bk_labels.append(clean_label)
+                        else:
+                            # Standardmäßig in die primäre Disziplinliste (ÖFOS/Container) einreihen
+                            oefos_ids.append(match)
+                            oefos_labels.append(label_val)
+                        break
 
     has_discipline = bool(oefos_ids or bk_ids)
     if not has_discipline:
@@ -254,14 +267,12 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
                 if val and val not in object_types:
                     object_types.append(val)
 
-# ---------------------------------------------------------
-    # 8. IDENTIFIERS - DUAL SYSTEM FÜR DOIs
+    # ---------------------------------------------------------
+    # 8. IDENTIFIERS - DUAL SYSTEM FÜR DOIs, ORCID & ROR
     # ---------------------------------------------------------
     
-    # --- A) DOI DUAL SYSTEM ---
+    # --- A) DOI ---
     all_dois = []
-
-    # EBENE 1: Strikte Pfad-Suche (rdam:P30004 -> ids:doi)
     rda_ids = node.get("rdam:P30004", data.get("rdam:P30004", []))
     rda_ids = rda_ids if isinstance(rda_ids, list) else [rda_ids]
 
@@ -271,7 +282,6 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
             if val:
                 all_dois.append(val)
 
-    # EBENE 2: Regex-Fallback (Penalty), falls Ebene 1 leer war
     if not all_dois:
         def _scan_dois(obj):
             found = []
@@ -287,15 +297,12 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
         fallback_dois = _scan_dois(data)
         if fallback_dois:
             all_dois.extend(fallback_dois)
-            # PENALTY VERGEBEN: DOI existiert, ist aber strukturell falsch abgelegt
             missing_fields.append("DOI_STRUCTURALLY_MISPLACED")
 
-    # --- B & C) ORCID & ROR DUAL SYSTEM ---
-
+    # --- B & C) ORCID & ROR ---
     strict_orcids = []
     strict_rors = []
 
-    # Ebene 1: Strikte Pfad-Suche für Personen/Einrichtungen und deren Affiliations
     for key, val_list in node.items():
         if key.startswith("role:") or key in ["dc:creator", "dc:contributor", "schema:author"]:
             if not isinstance(val_list, list): 
@@ -304,7 +311,6 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
             for item in val_list:
                 if not isinstance(item, dict): continue
                 
-                # 1. ORCID und ROR direkt in der Rolle suchen
                 matches = item.get("skos:exactMatch", item.get("exactMatch", []))
                 matches = matches if isinstance(matches, list) else [matches]
                 for match in matches:
@@ -316,7 +322,6 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
                     r_match = re.search(r'(ror\.org/[a-zA-Z0-9]+)', str(m_val))
                     if r_match: strict_rors.append("https://" + r_match.group(1))
 
-                # 2. ROR in den Affiliations suchen (falls Einrichtung an Person hängt)
                 affiliations = item.get("schema:affiliation", [])
                 affiliations = affiliations if isinstance(affiliations, list) else [affiliations]
                 for affil in affiliations:
@@ -329,7 +334,6 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
                         r_match = re.search(r'(ror\.org/[a-zA-Z0-9]+)', str(a_val))
                         if r_match: strict_rors.append("https://" + r_match.group(1))
 
-    # Ebene 2: Regex-Fallback (ORCID)
     if not strict_orcids:
         def _scan_orcids(obj):
             found = []
@@ -347,7 +351,6 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
             strict_orcids.extend(fallback_orcids)
             missing_fields.append("ORCID_STRUCTURALLY_MISPLACED")
 
-    # Ebene 2: Regex-Fallback (ROR)
     if not strict_rors:
         def _scan_rors(obj):
             found = []
@@ -365,7 +368,7 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
             strict_rors.extend(fallback_rors)
             missing_fields.append("ROR_STRUCTURALLY_MISPLACED")
 
-    # --- D) Listen aufteilen & bereinigen ---
+    # --- D) Bereinigen ---
     all_dois = list(set(all_dois))
     orcid = list(set(strict_orcids))
     ror = list(set(strict_rors))
@@ -373,7 +376,7 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
     internal_dois = [f"https://doi.org/{d}" for d in all_dois if "10.60522" in d]
     external_dois = [f"https://doi.org/{d}" for d in all_dois if "10.60522" not in d]
 
-# ---------------------------------------------------------
+    # ---------------------------------------------------------
     # 9. AMPEL & AUSWERTUNG (Dynamisch via audit_rules.json)
     # ---------------------------------------------------------
     status = "GREEN"
@@ -381,7 +384,6 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
     
     mandatory = rules.get("mandatory_fields", [])
     
-    # 9a. PFLICHTFELDER PRÜFEN (RED Fallback)
     if "title" in mandatory and not title_valid:
         status, visibility = "RED", False
     if "description" in mandatory and not desc_valid:
@@ -390,14 +392,13 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
         status, visibility = "RED", False
     if "discipline" in mandatory and not has_discipline:
         status, visibility = "RED", False
-    if "orcid" in mandatory and not orcids:
+    if "orcid" in mandatory and not orcid:
         status, visibility = "RED", False
         if "MISSING_ORCID" not in missing_fields: missing_fields.append("MISSING_ORCID")
     if "doi_internal" in mandatory and not internal_dois:
         status, visibility = "RED", False
         if "MISSING_INTERNAL_DOI" not in missing_fields: missing_fields.append("MISSING_INTERNAL_DOI")
 
-    # 9b. GOLD INDIKATOREN BERECHNEN
     gold_count = 0
     gold_indicators_list = rules.get("gold_indicators", [])
     
@@ -405,10 +406,9 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
         gold_count += len(gnd_ids)
     if "ror" in gold_indicators_list:
         gold_count += len(ror)
-    if "orcid" in gold_indicators_list: # Falls ORCID im Profil Gold wert sein soll
+    if "orcid" in gold_indicators_list:
         gold_count += len(orcid)
 
-    # Wenn alles grün ist und Gold-Indikatoren gefunden wurden -> GOLD
     if status != "RED" and gold_count > 0:
         status = "GOLD"
 

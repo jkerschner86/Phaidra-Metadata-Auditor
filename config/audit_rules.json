@@ -1,8 +1,13 @@
 {
-  "oer": {
+"oer": {
     "name": "Open Educational Resources (OER)",
     "mandatory_fields": ["title", "description", "license", "discipline"],
-    "gold_indicators": ["gnd"]
+    "gold_indicators": ["gnd"],
+    "allowed_vocabularies": {
+      "discipline_prefixes": ["oefos2012:", "uri.gbv.de/terminology/bk/"],
+      "license_domains": ["creativecommons.org", "spdx.org"],
+      "gnd_prefix": ["d-nb.info/gnd/"]
+    }
   },
   "research_data": {
     "name": "Research Data (Forschungsdaten)",
