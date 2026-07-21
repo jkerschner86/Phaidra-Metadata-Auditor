@@ -2,7 +2,7 @@ phaidra-auditor/
 │
 ├── config/
 │   ├── mime_mapping.json
-│   └── profiles.json     
+│   └── audit_rules.json     
 │
 ├── modules/
 │   ├── analyzer.py
@@ -12,6 +12,7 @@ phaidra-auditor/
 ├── output/
 │   ├── audit_report.csv
 │   └── dashboard.png
+│
 ├── main.py
 ├── .gitignore
 └── requirements.txt

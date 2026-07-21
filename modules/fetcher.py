@@ -9,15 +9,22 @@ import xml.etree.ElementTree as ET
 from typing import List, Dict, Any, Optional, Union
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-PHAIDRA_BASE_URL = "https://phaidra.ustp.at/"
+PHAIDRA_BASE_URL = "https://phaidra.ustp.at"  # oder austauschbar je nach Instanz
 OAI_ENDPOINT = f"{PHAIDRA_BASE_URL}/api/oai"
 MAX_WORKERS = 10
+
+# NEW: Standard browser headers to bypass firewall/WAF blocks
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Accept": "application/xml, text/xml, */*"
+}
 
 def fetch_single_jsonld(pid: str, api_date: str) -> Optional[Dict[str, Any]]:
     """Retrieves the JSON-LD graph and packages it with the API date."""
     url = f"{PHAIDRA_BASE_URL}/api/object/{pid}/jsonld"
     try:
-        response = requests.get(url, timeout=10)
+        # Pass headers to bypass blocks
+        response = requests.get(url, headers=HEADERS, timeout=10)
         response.raise_for_status()
         data = response.json()
         
@@ -39,22 +46,18 @@ def harvest_pids_from_oai(scope: str, year: Union[int, str]) -> Dict[str, str]:
         "metadataPrefix": "oai_dc"
     }
 
-    # HERE IS THE FIX: Build date logic dynamically and robustly
     year_str = str(year).strip().upper()
     if year_str in ["ALL", "ALLE"]:
-        # From 2014 until today (no 'until' parameter necessary)
         params["from"] = "2014-01-01T00:00:00Z"
         print(f"[Fetcher] Requesting PIDs (Scope: {scope}, Entire period from 2014)...")
     else:
         if not str(year).strip().isdigit() or int(year) < 2014:
             print(f"[Error] Invalid year: '{year}'. Please enter 'all' or a number from 2014 onwards.")
             return {}
-        # Narrow down to a specific year
         params["from"] = f"{year}-01-01T00:00:00Z"
         params["until"] = f"{year}-12-31T23:59:59Z"
         print(f"[Fetcher] Requesting PIDs (Scope: {scope}, Year: {year})...")
 
-    # Filter by set
     if scope != "entire_repo":
         params["set"] = scope
 
@@ -63,11 +66,19 @@ def harvest_pids_from_oai(scope: str, year: Union[int, str]) -> Dict[str, str]:
     
     while True:
         try:
-            response = requests.get(OAI_ENDPOINT, params=params, timeout=15)
+            # Pass headers to bypass blocks
+            response = requests.get(OAI_ENDPOINT, params=params, headers=HEADERS, timeout=15)
             response.raise_for_status()
+            
+            # NEW: Defensive Pre-Check. Verify if the response is actually XML before parsing.
+            content_start = response.content.strip()[:20].decode('utf-8', errors='ignore').lower()
+            if not content_start.startswith("<?xml") and not content_start.startswith("<oai-pmh"):
+                print(f"[Error] Server returned non-XML format (likely a firewall block page).")
+                print(f"        Preview: {response.content[:150]}...")
+                break
+
             root = ET.fromstring(response.content)
             
-            # Extract PIDs and datestamps
             for header in root.findall('.//oai:header', namespaces):
                 if header.get('status') == 'deleted':
                     continue
@@ -81,7 +92,6 @@ def harvest_pids_from_oai(scope: str, year: Union[int, str]) -> Dict[str, str]:
                     date_val = datestamp_tag.text.split("T")[0] if datestamp_tag is not None else "Unknown"
                     pids_with_dates[pid] = date_val
 
-            # Check pagination (ResumptionToken)
             token_tag = root.find('.//oai:resumptionToken', namespaces)
             if token_tag is not None and token_tag.text:
                 params = {"verb": "ListIdentifiers", "resumptionToken": token_tag.text}
@@ -94,7 +104,6 @@ def harvest_pids_from_oai(scope: str, year: Union[int, str]) -> Dict[str, str]:
             break
 
     return pids_with_dates
-
 
 def harvest_oer_data(scope: str = "oer", year: Union[int, str] = "ALL") -> List[Dict[str, Any]]:
     """Collects JSON-LD datasets in parallel based on the located PIDs."""
