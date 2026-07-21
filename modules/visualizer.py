@@ -10,9 +10,9 @@ import numpy as np
 from collections import Counter
 
 def generate_dashboard(records: list, output_path: str, profile_name: str, timeframe: str):
-    """Aggregiert die Daten und zeichnet das 3x3 Dashboard mit dynamischem Titel."""
+    """Aggregates data and draws the 3x3 dashboard with a dynamic title."""
     
-    # 1. DATEN AGGREGIEREN
+    # 1. AGGREGATE DATA
     statuses = Counter(r.get("status") for r in records)
     
     # Missing Fields (Flatten & filter)
@@ -54,14 +54,14 @@ def generate_dashboard(records: list, output_path: str, profile_name: str, timef
     plt.style.use('bmh')
     fig, axes = plt.subplots(3, 3, figsize=(22, 16))
     
-    # Dynamischen Titel generieren (Englisch & inkl. Grundgesamtheit)
+    # Generate dynamic title (English & incl. total population)
     display_time = "All Time" if str(timeframe).lower() in ["all", "alle"] else str(timeframe)
     short_profile = "OER" if "OER" in profile_name else profile_name
     total_objects = len(records)
     
     dynamic_title = f"PMA - Summary - {short_profile} - {display_time}\nTotal Objects Audited: {total_objects}"
     
-    # y-Wert und top-Margin anpassen, damit der 2-Zeiler nicht die Plots überlagert
+    # Adjust y-value and top margin so the 2-liner doesn't overlap the plots
     fig.suptitle(dynamic_title, fontsize=24, fontweight='bold', y=0.98)
     fig.subplots_adjust(top=0.92) 
     
@@ -197,25 +197,25 @@ def generate_dashboard(records: list, output_path: str, profile_name: str, timef
     if pub_months:
         month_counts = Counter(pub_months)
         
-        # Zwingend chronologisch sortieren
+        # Strictly sort chronologically
         sorted_months = sorted(month_counts.keys())
         counts = [month_counts[m] for m in sorted_months]
         
-        # Bar-Chart zeichnen
+        # Draw bar chart
         ax_time.bar(sorted_months, counts, color='#3498db', edgecolor='black', zorder=3)
         ax_time.grid(axis='y', linestyle='--', alpha=0.7, zorder=0)
         ax_time.set_title('Publication Timeline', fontweight='bold')
         ax_time.set_ylabel('Number of Objects')
         
-        # 45-Grad Rotation für die Lesbarkeit
+        # 45-degree rotation for readability
         ax_time.tick_params(axis='x', rotation=45, labelsize=9)
         
-        # Dynamische x-Achsen Bereinigung (verhindert Text-Überlappung bei Zeiträumen > 1 Jahr)
+        # Dynamic x-axis cleanup (prevents text overlap for periods > 1 year)
         if len(sorted_months) > 12:
-            # Berechnet dynamisch die Schrittweite (max. ~10-12 Labels auf der Achse)
+            # Dynamically calculates the step size (max. ~10-12 labels on the axis)
             step = len(sorted_months) // 10 + 1
             for i, label in enumerate(ax_time.xaxis.get_ticklabels()):
-                if i % step != 0 and i != len(sorted_months) - 1: # Letztes Label idealerweise behalten
+                if i % step != 0 and i != len(sorted_months) - 1: # Ideally keep the last label
                     label.set_visible(False)
     else:
         ax_time.text(0.5, 0.5, 'No temporal data available', ha='center', va='center', color='gray')

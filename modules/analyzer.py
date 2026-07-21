@@ -21,7 +21,7 @@ except Exception:
     pass
 
 def extract_identifiers(obj: Any) -> Dict[str, List[str]]:
-    """Durchsucht rekursiv den Baum nach ORCIDs und RORs (DOIs haben eigenes Dual-System)."""
+    """Recursively searches the tree for ORCIDs and RORs (DOIs have their own dual-system)."""
     found = {"orcid": [], "ror": []}
     
     def _scan(node):
@@ -46,7 +46,8 @@ def extract_identifiers(obj: Any) -> Dict[str, List[str]]:
     return found
 
 def get_phaidra_node(data: Dict[str, Any]) -> Dict[str, Any]:
-    """Findet den eigentlichen Metadaten-Knoten im @graph Array."""
+    """Finds the actual metadata node within the @graph array."""
+    # We add bf:note as a search criterion!
     keys_to_check = ["dce:title", "dcterms:title", "bf:note", "edm:hasType"]
     
     if any(k in data for k in keys_to_check):
@@ -57,7 +58,7 @@ def get_phaidra_node(data: Dict[str, Any]) -> Dict[str, Any]:
             if isinstance(node, dict) and any(k in node for k in keys_to_check):
                 return node
                 
-        # Fallback auf o:ID im Graph
+        # Fallback to o:ID in the graph
         for node in data["@graph"]:
             if isinstance(node, dict) and "@id" in node and "o:" in str(node["@id"]):
                 return node
@@ -66,7 +67,7 @@ def get_phaidra_node(data: Dict[str, Any]) -> Dict[str, Any]:
 def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Dict[str, Any]:
     
     # ---------------------------------------------------------
-    # NEU: DYNAMISCHE VOKABULARE AUS PROFIL LADEN
+    # NEW: LOAD DYNAMIC VOCABULARIES FROM PROFILE
     # ---------------------------------------------------------
     vocabularies = rules.get("allowed_vocabularies", {})
     allowed_disciplines = vocabularies.get("discipline_prefixes", ["oefos2012:", "uri.gbv.de/terminology/bk/"])
@@ -74,7 +75,7 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
     gnd_prefixes = vocabularies.get("gnd_prefix", ["d-nb.info/gnd/"])
 
     # ---------------------------------------------------------
-    # 1. PID ZUVERLÄSSIG EXTRAHIEREN
+    # 1. RELIABLY EXTRACT PID
     # ---------------------------------------------------------
     pid = data.get("_harvester_pid")
     if not pid:
@@ -90,12 +91,12 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
     missing_fields = []
 
     # ---------------------------------------------------------
-    # 2. TITEL
+    # 2. TITLE
     # ---------------------------------------------------------
     title_list = node.get("dce:title", node.get("dcterms:title", []))
     has_title = False
     title_valid = False
-    title = "Kein Titel"
+    title = "No Title"
     language = "Unknown"
     
     if title_list:
@@ -163,7 +164,7 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
         missing_fields.append("DESCRIPTION_INSUFFICIENT_LENGTH")
 
     # ---------------------------------------------------------
-    # 4. LICENSE (Dynamisiert)
+    # 4. LICENSE (Dynamic)
     # ---------------------------------------------------------
     rights_list = node.get("edm:rights", node.get("dcterms:rights", []))
     license_url = ""
@@ -174,13 +175,13 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
         else:
             license_url = str(first_right)
 
-    # Prüft dynamisch gegen die Liste der erlaubten Domains aus der JSON
+    # Dynamically checks against the list of allowed domains from the JSON
     has_valid_license = any(domain in license_url for domain in allowed_licenses)
     if not has_valid_license:
         missing_fields.append("LICENSE_URL_MISSING_OR_INVALID")
 
     # ---------------------------------------------------------
-    # 5. SUBJECTS & DISZIPLINEN (Dynamisiert)
+    # 5. SUBJECTS & DISCIPLINES (Dynamic)
     # ---------------------------------------------------------
     subjects = node.get("dcterms:subject", node.get("dc:subject", []))
     subjects = subjects if isinstance(subjects, list) else [subjects]
@@ -208,7 +209,7 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
             if isinstance(match, dict): match = match.get("@id", match.get("@value", ""))
             if not isinstance(match, str): continue
             
-            # Dynamische GND Prüfung
+            # Dynamic GND check
             if any(gnd_pref in match for gnd_pref in gnd_prefixes):
                 for gnd_pref in gnd_prefixes:
                     if gnd_pref in match:
@@ -216,11 +217,11 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
                         gnd_labels.append(label_val)
                         break
             
-            # Dynamische Disziplin-Prüfung
+            # Dynamic discipline check
             elif any(disc_pref in match for disc_pref in allowed_disciplines):
                 for disc_pref in allowed_disciplines:
                     if disc_pref in match:
-                        # Trennung für abwärtskompatiblen CSV-Export
+                        # Separation for backward-compatible CSV export
                         if "bk/" in disc_pref or "bk" in disc_pref.lower():
                             bk_id = match.split(disc_pref)[-1]
                             bk_ids.append(bk_id)
@@ -229,7 +230,7 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
                                 clean_label = clean_label[len(bk_id):].strip()
                             bk_labels.append(clean_label)
                         else:
-                            # Standardmäßig in die primäre Disziplinliste (ÖFOS/Container) einreihen
+                            # By default, queue into the primary discipline list (ÖFOS/Container)
                             oefos_ids.append(match)
                             oefos_labels.append(label_val)
                         break
@@ -268,7 +269,7 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
                     object_types.append(val)
 
     # ---------------------------------------------------------
-    # 8. IDENTIFIERS - DUAL SYSTEM FÜR DOIs, ORCID & ROR
+    # 8. IDENTIFIERS - DUAL SYSTEM FOR DOIs, ORCID & ROR
     # ---------------------------------------------------------
     
     # --- A) DOI ---
@@ -368,7 +369,7 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
             strict_rors.extend(fallback_rors)
             missing_fields.append("ROR_STRUCTURALLY_MISPLACED")
 
-    # --- D) Bereinigen ---
+    # --- D) Clean up ---
     all_dois = list(set(all_dois))
     orcid = list(set(strict_orcids))
     ror = list(set(strict_rors))
@@ -377,7 +378,7 @@ def analyze_uploader_metadata(data: Dict[str, Any], rules: Dict[str, Any]) -> Di
     external_dois = [f"https://doi.org/{d}" for d in all_dois if "10.60522" not in d]
 
     # ---------------------------------------------------------
-    # 9. AMPEL & AUSWERTUNG (Dynamisch via audit_rules.json)
+    # 9. TRAFFIC LIGHT & EVALUATION (Dynamic via audit_rules.json)
     # ---------------------------------------------------------
     status = "GREEN"
     visibility = True
@@ -439,13 +440,13 @@ def run_audit(raw_records: List[Dict[str, Any]], profiles: Dict[str, Any] = None
     return [analyze_uploader_metadata(rec, profiles) for rec in raw_records]
 
 def execute_compliance_audit(raw_records: List[Dict[str, Any]], profiles: Dict[str, Any] = None) -> List[Dict[str, Any]]:
-    print(f"Starte Analyse für {len(raw_records)} Objekte...")
+    print(f"Starting analysis for {len(raw_records)} objects...")
     audit_results = []
     for record in raw_records:
         try:
             analyzed = analyze_uploader_metadata(record, profiles)
             audit_results.append(analyzed)
         except Exception as e:
-            print(f"[Warnung] Fehler bei der Analyse eines Objekts: {e}")
+            print(f"[Warning] Error analyzing an object: {e}")
             continue
     return audit_results

@@ -8,106 +8,109 @@ from modules import visualizer
 
 def main():
     print("=" * 60)
-    print("Phaidra Metadata Auditor - Pipeline gestartet")
+    print("Phaidra Metadata Auditor - Pipeline started")
     print("=" * 60)
 
-    # 1. PFADE DEFINIEREN
+    # 1. DEFINE PATHS
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     RULES_PATH = os.path.join(BASE_DIR, "config", "audit_rules.json")
     timestamp = datetime.now().strftime("%Y-%m-%d_%H%M")
     OUTPUT_CSV_PATH = os.path.join(BASE_DIR, "Output", f"audit_report_{timestamp}.csv")
     OUTPUT_PNG_PATH = os.path.join(BASE_DIR, "Output", f"dashboard_{timestamp}.png")
 
-    # 2. REGELWERK LADEN & PROFIL WÄHLEN
+    # 2. LOAD RULES & SELECT PROFILE
     try:
         with open(RULES_PATH, "r", encoding="utf-8") as f:
             all_rules = json.load(f)
     except Exception as e:
-        print(f"[CRITICAL ERROR] Konnte audit_rules.json nicht laden: {e}")
+        print(f"[CRITICAL ERROR] Could not load audit_rules.json: {e}")
         return
 
-    print("\nVerfügbare Audit-Profile:")
+    print("\nAvailable Audit Profiles:")
     print("1: Open Educational Resources (OER)")
-    print("2: Research Data (Forschungsdaten)")
+    print("2: Research Data")
     
-    choice = input("Bitte Profilnummer wählen (1 oder 2): ").strip()
+    choice = input("Please select a profile number (1 or 2): ").strip()
     if choice == "2":
         active_profile_key = "research_data"
     else:
         active_profile_key = "oer"
         
     active_rules = all_rules[active_profile_key]
-    print(f"\n[INFO] Aktives Profil: {active_rules['name']}")
+    print(f"\n[INFO] Active profile: {active_rules['name']}")
 
 # 3. DATA FETCHING
-    print("\n[INFO] Konfiguration des Datenabrufs")
-    year_choice = input("Für welchen Zeitraum soll der Audit laufen? (Jahreszahl ab 2014 ODER 'alle'): ").strip()
+    print("\n[INFO] Data fetch configuration")
+    year_choice = input("For which period should the audit run? (Year from 2014 OR 'all'): ").strip()
     
-    print("\n[INFO] Starte Datenabruf via Fetcher...")
+    print("\n[INFO] Starting data fetch via Fetcher...")
     
-    # Der Scope wird nun 100% dynamisch aus der Profil-Wahl (JSON) abgeleitet
+    # The scope is now derived 100% dynamically from the profile choice (JSON)
     raw_objects = fetcher.harvest_oer_data(active_profile_key, year_choice)
     
 
-# 4. DATA ANALYSIS (Verarbeitung mit injizierter Konfiguration)
-    print("\n[INFO] Starte Metadaten-Analyse und Format-Mapping...")
+# 4. DATA ANALYSIS (Processing with injected configuration)
+    print("\n[INFO] Starting metadata analysis and format mapping...")
     compliance_records = []
     
     for idx, item in enumerate(raw_objects, start=1):
         try:
-            # ARCHITEKTUR-FIX: Prüfen, ob die Daten im Wrapper liegen, und sauber entpacken
+            # ARCHITECTURE FIX: Check if the data is in the wrapper and unpack cleanly
             if isinstance(item, dict) and "metadata" in item:
                 metadata_content = item["metadata"]
                 api_date = item.get("api_date", "Unknown")
                 pid = item.get("_harvester_pid", f"Index_{idx}")
             else:
-                # Fallback für alte Datenstrukturen
+                # Fallback for old data structures
                 metadata_content = item
                 api_date = "Unknown"
-                pid = item.get("@id", f"Unbekannt (Index {idx})") if isinstance(item, dict) else f"Unbekannt (Index {idx})"
+                pid = item.get("@id", f"Unknown (Index {idx})") if isinstance(item, dict) else f"Unknown (Index {idx})"
 
-            # Das reine JSON-LD und das aktive Regelwerk an den Analyzer übergeben
+            # Pass the pure JSON-LD and the active rule set to the analyzer
             record = analyzer.analyze_uploader_metadata(metadata_content, active_rules)
             
             record["object_id"] = pid
 
-            # Das OAI-Datum direkt in den Datensatz injizieren (ersetzt "Pending API Update")
+            # Inject the OAI date directly into the record (replaces "Pending API Update")
             record["date_published"] = api_date
 
-            # Das Jahr sicher extrahieren (nimmt die ersten 4 Zeichen vor dem Bindestrich)
+            # Safely extract the year (takes the first 4 characters before the hyphen)
             record["year_published"] = api_date.split("-")[0] if api_date and api_date != "Unknown" else "Unknown"
             
             compliance_records.append(record)
             
         except Exception as e:
-            # Verhindert, dass ein einzelnes defektes Objekt die gesamte Pipeline crasht
-            print(f"[WARNUNG] Objekt konnte nicht analysiert werden: {e}")
+            # Prevents a single broken object from crashing the entire pipeline
+            print(f"[WARNING] Object could not be analyzed: {e}")
 
-    print(f"[SUCCESS] Analyse abgeschlossen. {len(compliance_records)} Datensätze verarbeitet.")
+    print(f"[SUCCESS] Analysis complete. {len(compliance_records)} records processed.")
 
-    # 5. REPORTING (Ergebnisse in CSV schreiben)
-    print("\n[INFO] Generiere CSV-Report...")
+
+    reporter.generate_summary_stats(compliance_records)
+
+    # 5. REPORTING (Write results to CSV)
+    print("\n[INFO] Generating CSV report...")
     try:
         reporter.generate_csv_report(compliance_records, OUTPUT_CSV_PATH)
-        print(f"[SUCCESS] Report erfolgreich gespeichert unter: {OUTPUT_CSV_PATH}")
+        print(f"[SUCCESS] Report successfully saved to: {OUTPUT_CSV_PATH}")
     except Exception as e:
-        print(f"[CRITICAL ERROR] Erstellung des Reports fehlgeschlagen: {e}")
+        print(f"[CRITICAL ERROR] Report creation failed: {e}")
         return
-    print("\n[INFO] Generiere visuelles Dashboard...")
+    print("\n[INFO] Generating visual dashboard...")
     try:
-        # Wir übergeben nun zusätzlich den Profilnamen und die Jahreswahl
+        # We now additionally pass the profile name and the year choice
         visualizer.generate_dashboard(
             compliance_records, 
             OUTPUT_PNG_PATH, 
             active_rules["name"], 
             year_choice
         )
-        print(f"[SUCCESS] Dashboard erfolgreich gespeichert unter: {OUTPUT_PNG_PATH}")
+        print(f"[SUCCESS] Dashboard successfully saved to: {OUTPUT_PNG_PATH}")
     except Exception as e:
-        print(f"[ERROR] Erstellung des Dashboards fehlgeschlagen: {e}")
+        print(f"[ERROR] Dashboard creation failed: {e}")
 
     print("\n" + "=" * 60)
-    print("Auditor-Pipeline erfolgreich beendet.")
+    print("Auditor pipeline finished successfully.")
     print("=" * 60)
 
 if __name__ == "__main__":

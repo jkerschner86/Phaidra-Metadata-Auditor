@@ -9,10 +9,10 @@ import os
 from typing import List, Dict, Any
 
 def generate_summary_stats(compliance_records: List[Dict[str, Any]]) -> None:
-    """Erzeugt eine übersichtliche Konsolenausgabe der Audit-Statistiken (Ampel-Verteilung)."""
+    """Generates a clear console output of the audit statistics (traffic light distribution)."""
     total = len(compliance_records)
     if total == 0:
-        print("\n[Fehler] Keine Datensätze für eine Statistik vorhanden.")
+        print("\n[Error] No records available for statistics.")
         return
 
     stats = {"RED": 0, "GREEN": 0, "GOLD": 0}
@@ -23,22 +23,22 @@ def generate_summary_stats(compliance_records: List[Dict[str, Any]]) -> None:
             stats[status] += 1
 
     print("\n" + "=" * 50)
-    print("         METADATEN-AUDIT ZUSAMMENFASSUNG")
+    print("         METADATA AUDIT SUMMARY")
     print("=" * 50)
-    print(f"Analysierte Objekte gesamt: {total}")
-    print(f"🔴 ROT (Nicht erfüllt):          {stats['RED']} ({stats['RED']/total*100:.1f}%)")
-    print(f"🟢 GRÜN (Erfüllt):               {stats['GREEN']} ({stats['GREEN']/total*100:.1f}%)")
-    print(f"🟡 GOLD (LOD / GND vorhanden):   {stats['GOLD']} ({stats['GOLD']/total*100:.1f}%)")
+    print(f"Total objects analyzed: {total}")
+    print(f"🔴 RED (Not fulfilled):          {stats['RED']} ({stats['RED']/total*100:.1f}%)")
+    print(f"🟢 GREEN (Fulfilled):            {stats['GREEN']} ({stats['GREEN']/total*100:.1f}%)")
+    print(f"🟡 GOLD (LOD / GND present):     {stats['GOLD']} ({stats['GOLD']/total*100:.1f}%)")
     print("=" * 50 + "\n")
 
 
 def generate_csv_report(compliance_records: List[Dict[str, Any]], output_filepath: str) -> str:
-    """Generiert einen semikolierten CSV-Report mittels automatisiertem DictWriter."""
+    """Generates a semicolon-separated CSV report using an automated DictWriter."""
     if not compliance_records:
-        print("[Warnung] Keine Datensätze zum Schreiben vorhanden.")
+        print("[Warning] No records available to write.")
         return output_filepath
 
-    # Definieren die exakten Keys aus dem Analyzer. DictWriter nutzt dies als Spaltenordnung.
+    # Define the exact keys from the analyzer. DictWriter uses this for column ordering.
     headers = [
         "object_id", "title", "status", "visibility", "gold_indicators_found", 
         "missing_fields", "orcid","ror","oefos_ids", "oefos_labels", "bk_ids", "bk_labels", 
@@ -46,19 +46,19 @@ def generate_csv_report(compliance_records: List[Dict[str, Any]], output_filepat
         "date_published", "year_published", "language", "object_types", "doi_internal", "doi_external"
     ]
 
-    # Verzeichnis erstellen, falls es noch nicht existiert (z.B. nach frischem Klonen)
+    # Create directory if it doesn't exist yet (e.g., after a fresh clone)
     os.makedirs(os.path.dirname(output_filepath), exist_ok=True)
 
     try:
         with open(output_filepath, mode="w", newline="", encoding="utf-8-sig") as csv_file:
-            # Verwendung von DictWriter eliminiert positionelle Fehler
+            # Using DictWriter eliminates positional errors
             writer = csv.DictWriter(csv_file, fieldnames=headers, delimiter=";", quotechar='"', quoting=csv.QUOTE_MINIMAL)
             
-            # Header schreiben
+            # Write header
             writer.writeheader()
 
             for record in compliance_records:
-                # Vorverarbeitung: Listen plattklopfen und fehlende Keys abfangen
+                # Preprocessing: flatten lists and catch missing keys
                 processed_row = {}
                 for field in headers:
                     val = record.get(field)
@@ -71,9 +71,9 @@ def generate_csv_report(compliance_records: List[Dict[str, Any]], output_filepat
 
                 writer.writerow(processed_row)
 
-        print(f"[Erfolg] CSV-Report generiert unter: {output_filepath}")
+        print(f"[Success] CSV report generated at: {output_filepath}")
         return output_filepath
         
     except Exception as e:
-        print(f"[CRITICAL ERROR] Fehler beim Schreiben der CSV-Datei: {e}")
+        print(f"[CRITICAL ERROR] Error writing the CSV file: {e}")
         raise e

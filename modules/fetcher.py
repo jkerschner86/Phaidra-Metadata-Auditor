@@ -9,12 +9,12 @@ import xml.etree.ElementTree as ET
 from typing import List, Dict, Any, Optional, Union
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-PHAIDRA_BASE_URL = "https://phaidra.ustp.at"
+PHAIDRA_BASE_URL = "https://phaidra.ustp.at/"
 OAI_ENDPOINT = f"{PHAIDRA_BASE_URL}/api/oai"
 MAX_WORKERS = 10
 
 def fetch_single_jsonld(pid: str, api_date: str) -> Optional[Dict[str, Any]]:
-    """Holt den JSON-LD Graphen und verpackt ihn mit dem API-Datum."""
+    """Retrieves the JSON-LD graph and packages it with the API date."""
     url = f"{PHAIDRA_BASE_URL}/api/object/{pid}/jsonld"
     try:
         response = requests.get(url, timeout=10)
@@ -31,30 +31,30 @@ def fetch_single_jsonld(pid: str, api_date: str) -> Optional[Dict[str, Any]]:
 
 def harvest_pids_from_oai(scope: str, year: Union[int, str]) -> Dict[str, str]:
     """
-    Nutzt OAI-PMH ListIdentifiers inkl. ResumptionTokens.
-    Akzeptiert ein spezifisches Jahr oder 'ALL'/'ALLE' für den gesamten Zeitraum ab 2014.
+    Utilizes OAI-PMH ListIdentifiers including ResumptionTokens.
+    Accepts a specific year or 'ALL'/'ALLE' for the entire period starting from 2014.
     """
     params = {
         "verb": "ListIdentifiers",
         "metadataPrefix": "oai_dc"
     }
 
-    # HIER IST DER FIX: Datums-Logik dynamisch und robust aufbauen
+    # HERE IS THE FIX: Build date logic dynamically and robustly
     year_str = str(year).strip().upper()
     if year_str in ["ALL", "ALLE"]:
-        # Ab 2014 bis heute (kein 'until' Parameter nötig)
+        # From 2014 until today (no 'until' parameter necessary)
         params["from"] = "2014-01-01T00:00:00Z"
-        print(f"[Fetcher] Frage PIDs ab (Scope: {scope}, Gesamter Zeitraum ab 2014)...")
+        print(f"[Fetcher] Requesting PIDs (Scope: {scope}, Entire period from 2014)...")
     else:
         if not str(year).strip().isdigit() or int(year) < 2014:
-            print(f"[Fehler] Ungültiges Jahr: '{year}'. Bitte 'alle' oder eine Zahl ab 2014 eingeben.")
+            print(f"[Error] Invalid year: '{year}'. Please enter 'all' or a number from 2014 onwards.")
             return {}
-        # Spezifisches Jahr eingrenzen
+        # Narrow down to a specific year
         params["from"] = f"{year}-01-01T00:00:00Z"
         params["until"] = f"{year}-12-31T23:59:59Z"
-        print(f"[Fetcher] Frage PIDs ab (Scope: {scope}, Jahr: {year})...")
+        print(f"[Fetcher] Requesting PIDs (Scope: {scope}, Year: {year})...")
 
-    # Set filtern
+    # Filter by set
     if scope != "entire_repo":
         params["set"] = scope
 
@@ -67,7 +67,7 @@ def harvest_pids_from_oai(scope: str, year: Union[int, str]) -> Dict[str, str]:
             response.raise_for_status()
             root = ET.fromstring(response.content)
             
-            # PIDs und Datestamps extrahieren
+            # Extract PIDs and datestamps
             for header in root.findall('.//oai:header', namespaces):
                 if header.get('status') == 'deleted':
                     continue
@@ -81,29 +81,29 @@ def harvest_pids_from_oai(scope: str, year: Union[int, str]) -> Dict[str, str]:
                     date_val = datestamp_tag.text.split("T")[0] if datestamp_tag is not None else "Unknown"
                     pids_with_dates[pid] = date_val
 
-            # Paginierung prüfen (ResumptionToken)
+            # Check pagination (ResumptionToken)
             token_tag = root.find('.//oai:resumptionToken', namespaces)
             if token_tag is not None and token_tag.text:
                 params = {"verb": "ListIdentifiers", "resumptionToken": token_tag.text}
-                print(f"[Fetcher] Lade nächste Seite... (Bisher gefunden: {len(pids_with_dates)})")
+                print(f"[Fetcher] Loading next page... (Found so far: {len(pids_with_dates)})")
             else:
                 break 
 
         except Exception as e:
-            print(f"[Fehler] Abbruch bei der OAI-Abfrage: {e}")
+            print(f"[Error] Aborted during OAI request: {e}")
             break
 
     return pids_with_dates
 
 
 def harvest_oer_data(scope: str = "oer", year: Union[int, str] = "ALL") -> List[Dict[str, Any]]:
-    """Sammelt JSON-LD Datensätze basierend auf den gefundenen PIDs parallel ein."""
+    """Collects JSON-LD datasets in parallel based on the located PIDs."""
     
     pids_dict = harvest_pids_from_oai(scope, year)
     if not pids_dict:
         return []
 
-    print(f"-> {len(pids_dict)} Objekte lokalisiert. Starte parallelen Download...")
+    print(f"-> {len(pids_dict)} objects located. Starting parallel download...")
     
     jsonld_results = []
     failed_pids = []
@@ -126,7 +126,7 @@ def harvest_oer_data(scope: str = "oer", year: Union[int, str] = "ALL") -> List[
                 failed_pids.append(pid)
 
     if failed_pids:
-        print(f"\n[Warnung] {len(failed_pids)} Objekte konnten nicht geladen werden (Timeout/404):")
-        print(f"          {', '.join(failed_pids[:10])} ... (und weitere)\n")
+        print(f"\n[Warning] {len(failed_pids)} objects could not be loaded (Timeout/404):")
+        print(f"          {', '.join(failed_pids[:10])} ... (and more)\n")
 
     return jsonld_results
