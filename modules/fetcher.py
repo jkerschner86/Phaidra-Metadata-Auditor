@@ -70,7 +70,7 @@ def harvest_pids_from_oai(scope: str, year: Union[int, str]) -> Dict[str, str]:
             response = requests.get(OAI_ENDPOINT, params=params, headers=HEADERS, timeout=15)
             response.raise_for_status()
             
-            # NEW: Defensive Pre-Check. Verify if the response is actually XML before parsing.
+            # Defensive Pre-Check. Verify if the response is actually XML before parsing.
             content_start = response.content.strip()[:20].decode('utf-8', errors='ignore').lower()
             if not content_start.startswith("<?xml") and not content_start.startswith("<oai-pmh"):
                 print(f"[Error] Server returned non-XML format (likely a firewall block page).")

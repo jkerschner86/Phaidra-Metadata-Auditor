@@ -45,7 +45,7 @@ def main():
     
     print("\n[INFO] Starting data fetch via Fetcher...")
     
-    # The scope is now derived 100% dynamically from the profile choice (JSON)
+    # The scope is derived from the profile choice (JSON)
     raw_objects = fetcher.harvest_oer_data(active_profile_key, year_choice)
     
 
@@ -66,7 +66,7 @@ def main():
                 api_date = "Unknown"
                 pid = item.get("@id", f"Unknown (Index {idx})") if isinstance(item, dict) else f"Unknown (Index {idx})"
 
-            # Pass the pure JSON-LD and the active rule set to the analyzer
+            # Pass the JSON-LD and the active rule set to the analyzer
             record = analyzer.analyze_uploader_metadata(metadata_content, active_rules)
             
             record["object_id"] = pid

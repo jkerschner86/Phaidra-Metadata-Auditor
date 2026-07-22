@@ -47,7 +47,7 @@ def extract_identifiers(obj: Any) -> Dict[str, List[str]]:
 
 def get_phaidra_node(data: Dict[str, Any]) -> Dict[str, Any]:
     """Finds the actual metadata node within the @graph array."""
-    # We add bf:note as a search criterion!
+    # Add bf:note as a search criterion!
     keys_to_check = ["dce:title", "dcterms:title", "bf:note", "edm:hasType"]
     
     if any(k in data for k in keys_to_check):
