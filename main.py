@@ -6,6 +6,8 @@ from modules import analyzer
 from modules import reporter
 from modules import visualizer
 
+__version__ = "1.0.0"
+
 def main():
     print("=" * 60)
     print("Phaidra Metadata Auditor - Pipeline started")

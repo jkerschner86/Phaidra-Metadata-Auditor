@@ -1,3 +1,5 @@
+https://github.com/jkerschner86/Phaidra-Metadata-Auditor
+
 phaidra-auditor/
 │
 ├── config/
