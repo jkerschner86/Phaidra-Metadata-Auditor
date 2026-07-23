@@ -49,3 +49,19 @@ The pipeline generates two files in the `Output/` directory, automatically times
 *   `modules/analyzer.py`: Executes the "Role-First" compliance evaluation.
 *   `modules/reporter.py`: Serializes dictionaries into flattened CSV reports.
 *   `modules/visualizer.py`: Aggregates data and plots the management dashboard.
+
+phaidra-auditor/
+├── 📁 config/                 # Configuration files
+│   ├── 📄 mime_mapping.json   # File format definitions
+│   └── 📄 audit_rules.json    # Validation rules & profile definitions
+├── 📁 modules/                # Core pipeline logic
+│   ├── 🐍 analyzer.py         # Traffic Light compliance engine
+│   ├── 🐍 fetcher.py          # OAI-PMH & REST API data retrieval
+│   ├── 🐍 reporter.py         # CSV report serialization
+│   └── 🐍 visualizer.py       # Matplotlib dashboard generation
+├── 📁 output/                 # Automatically generated artifacts
+│   ├── 📊 audit_report.csv
+│   └── 📈 dashboard.png
+├── 📄 .gitignore
+├── 🐍 main.py                 # Central orchestrator script
+└── 📄 requirements.txt        # Project dependencies (PEP 508)
