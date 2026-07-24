@@ -50,6 +50,7 @@ The pipeline generates two files in the `Output/` directory, automatically times
 *   `modules/reporter.py`: Serializes dictionaries into flattened CSV reports.
 *   `modules/visualizer.py`: Aggregates data and plots the management dashboard.
 
+```text
 phaidra-auditor/
 ├── 📁 config/                 # Configuration files
 │   ├── 📄 mime_mapping.json   # File format definitions
