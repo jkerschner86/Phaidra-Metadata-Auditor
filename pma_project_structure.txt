@@ -9,7 +9,8 @@ phaidra-auditor/
 ├── modules/
 │   ├── analyzer.py
 │   ├── fetcher.py
-│   └── reporter.py
+│   ├── reporter.py
+│   └── visualizer.py
 │
 ├── output/
 │   ├── audit_report.csv
